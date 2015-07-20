@@ -66,6 +66,9 @@
       teardown(function () {
       });
 
+      /*
+       * Check whether growth data source files are read correctly
+       */
       test('Retrieve source data correctly', function (done) {
         request.send({ url: urls.female.height, handleAs: 'json' });
 
@@ -77,6 +80,9 @@
         });
       });
 
+      /*
+       * Check data initilized on element's ready() method
+       */
       test('Element arrival-milestones initialized correctly', function (done) {
         request.send({ url: urls.female.height, handleAs: 'json' });
 
@@ -95,29 +101,57 @@
         });
       });
 
-      test('Check female weight data', function (done) {
-        var gender = 'female';
-        var dimension = 'weight';
-        var maxDeviation = 0.1;
+      /*
+       * Compare source data with interpolated data
+       */
+      compareGrowthData = function(gender, dimension) {
+        return function(done) {
+          var maxDeviation = 0.05;
+          var count = element.formulaValidity;
 
-        request.send({ url: urls[gender][dimension], handleAs: 'json' });
-
-        request.completes.then(function() {
-          var delta;
-          for (var i=0; i < 10; i++) {
-            element.setPercentiles(gender, i);
-            delta = element.percentiles[dimension].P50 - request.response[i].P50;
-            console.log(
-                i,
-                Math.round(element.percentiles[dimension].P50 * 1e4) / 1e4,
-                Math.round(request.response[i].P50 * 1e4) / 1e4,
-                'Δ ' + delta.toFixed(4)
-            );
-            expect(delta).to.be.below(maxDeviation);
+          // Height only accurate until 730 days, because of jump length to height
+          // measurement in WHO source data (value drops ~7mm from 730 to 731)
+          if (dimension === 'height') {
+            count = 730;
           }
-          done();
-        }).catch(function(e) {
-          done(new Error(e));
+
+          request.send({ url: urls[gender][dimension], handleAs: 'json' });
+
+          request.completes.then(function() {
+            var delta;
+            for (var i=0; i <= count; i++) {
+              element.setPercentiles(gender, i);
+              delta = Math.abs(element.percentiles[dimension].P50-request.response[i].P50);
+/* Show deviation viaually in console *
+              var visualDelta = '';
+              for (var n=0; n < Math.round(delta*1e1); n++) {
+                visualDelta += '*';
+              }
+                console.log(
+                    visualDelta,
+                    i,
+                    Math.round(element.percentiles[dimension].P50 * 1e4) / 1e4,
+                    Math.round(request.response[i].P50 * 1e4) / 1e4,
+                    delta.toFixed(4)
+                );
+/**/
+              expect(delta).to.be.below(maxDeviation);
+            }
+            done();
+
+          }).catch(function(e) {
+            done(new Error(e));
+          });
+        }
+      };
+
+      /*
+       * Iterate through all genders/dimensions
+       */
+      genders.forEach(function(gender) {
+        dimensions.forEach(function(dim) {
+          console.log(gender, dim);
+          test('Check '+gender+' '+dim+' data', compareGrowthData(gender, dim));
         });
       });
 

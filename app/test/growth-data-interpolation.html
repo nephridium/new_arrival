@@ -81,9 +81,9 @@
       });
 
       /*
-       * Check whether source data is covered by element.formulaValidity
+       * Check whether source data covers by element.formulaValidity
        */
-      test('Source data is covered by element.formulaValidity', function (done) {
+      test('Source data covers element.formulaValidity', function (done) {
         request.send({ url: urls.female.height, handleAs: 'json' });
 
         request.completes.then(function() {

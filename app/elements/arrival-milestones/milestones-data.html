@@ -1,0 +1,534 @@
+<script>
+/*exported week, month, milestonesData */
+var week = 7;
+var month = 30.44;
+
+/*jshint quotmark: double */
+var milestonesData = [
+  {
+    "title": "Post Birth Vaccination",
+    "early": 0,
+    "late": 10.5,
+    "description": "Newborns are vaccinated within, their first few days in the hospital. Check your vaccination schedule for more information.",
+    "dateReached": ""
+  },
+  {
+    "title": "Month 1 Vaccination",
+    "early": 30,
+    "late": 40,
+    "description": "Vaccination on the first month.",
+    "dateReached": ""
+  },
+  {
+    "title": "Month 2 Vaccination",
+    "early": 60.88,
+    "late": 70.88,
+    "description": "Vaccination on the second month.",
+    "dateReached": ""
+  },
+  {
+    "title": "Month 4 Vaccination",
+    "early": 121.76,
+    "late": 131.76,
+    "description": "Vaccination on the forth month.",
+    "dateReached": ""
+  },
+  {
+    "title": "Month 6 Vaccination",
+    "early": 182.64,
+    "late": 192.64,
+    "description": "Vaccination on the sixth month.",
+    "dateReached": ""
+  },
+  {
+    "title": "Month 12 Vaccination",
+    "early": 365.28,
+    "late": 375.28,
+    "description": "Vaccination on the 12th month.",
+    "dateReached": ""
+  },
+  {
+    "title": "Month 15 Vaccination",
+    "early": 456.6,
+    "late": 466.6,
+    "description": "Vaccination on the 15th month.",
+    "dateReached": ""
+  },
+  {
+    "title": "Month 18 Vaccination",
+    "early": 547.92,
+    "late": 557.92,
+    "description": "Vaccination on the 18th month.",
+    "dateReached": ""
+  },
+  {
+    "title": "Rooting Reflex",
+    "early": 0,
+    "late": 7,
+    "description": "Essential for feeding. If you stroke the side of the baby’s cheek with your finger it will turn its head toward it and open its mouth wide. This reflex usually disappears around month 4.",
+    "dateReached": ""
+  },
+  {
+    "title": "Startle Reflex",
+    "early": 0,
+    "late": 30,
+    "description": "Also known as Moro reflex. Baby extends arms and legs when startled; it is triggered by sudden movements registered by the baby’s inner ear, or by loud noises. It usually disappears around month 2.",
+    "dateReached": ""
+  },
+  {
+    "title": "Stepping Reflex",
+    "early": 0,
+    "late": 30,
+    "description": "When holding your baby under its armpits and letting its feet touch the floor (make sure baby's head is supported) it will do stepping movements. It usually disappears again around month 2.",
+    "dateReached": ""
+  },
+  {
+    "title": "Grasping Reflex",
+    "early": 0,
+    "late": 30,
+    "description": "Stroking the baby’s palm will trigger a grasp that can be fairly tight. It usually disappears around month 3-4.",
+    "dateReached": ""
+  },
+  {
+    "title": "Basic body language",
+    "early": 0,
+    "late": 7,
+    "description": "Baby moves arms and legs when agitated. Will fuss or cry when uncomfortable or hungry.",
+    "dateReached": ""
+  },
+  {
+    "title": "Hearing",
+    "early": 5,
+    "late": 30,
+    "description": "Baby's will react to loud noises and to certain other sounds.",
+    "dateReached": ""
+  },
+  {
+    "title": "Umbilical stump detaches",
+    "early": 7,
+    "late": 21,
+    "description": "Baby's umbilical stump detaches. Until then clean it regularly after changing diapers. There is currently no consensus on whether or not dipping swabs dipped in rubbing alcohol is beneficial. Though alcohol certainly kills germs, some studies suggest it may take longer for the stump to fall off.  Please consult your doctor if you are unsure.",
+    "dateReached": ""
+  },
+  {
+    "title": "Holds heads up",
+    "early": 30,
+    "late": 60,
+    "description": "Baby can hold head up to 45 degrees for a short while.",
+    "dateReached": ""
+  },
+  {
+    "title": "Smiling",
+    "early": 30,
+    "late": 60,
+    "description": "Baby smiles spontaneously when comfortable or when hearing parent's voice.",
+    "dateReached": ""
+  },
+  {
+    "title": "Hands",
+    "early": 30,
+    "late": 60,
+    "description": "Baby notices its hands and follows own hand movements with eyes.",
+    "dateReached": ""
+  },
+  {
+    "title": "Raises head",
+    "early": 30,
+    "late": 60,
+    "description": "Baby raises head when lying on tummy.",
+    "dateReached": ""
+  },
+  {
+    "title": "Tracking",
+    "early": 30,
+    "late": 90,
+    "description": "Baby follows people or objects with eyes and head movements.",
+    "dateReached": ""
+  },
+  {
+    "title": "Micro Pushup",
+    "early": 42,
+    "late": 90,
+    "description": "When on tummy baby pushes up its head and torso slightly using its arm.",
+    "dateReached": ""
+  },
+  {
+    "title": "Cooing",
+    "early": 50,
+    "late": 90,
+    "description": "Baby makes cooing sounds and utters simple words like goo-ga",
+    "dateReached": ""
+  },
+  {
+    "title": "Social smile",
+    "early": 60,
+    "late": 90,
+    "description": "Baby smiles while interacting with people, often in response to someone smiling at them.",
+    "dateReached": ""
+  },
+  {
+    "title": "LOL",
+    "early": 60,
+    "late": 90,
+    "description": "Baby laughs out loud at parent or toy it likes.",
+    "dateReached": ""
+  },
+  {
+    "title": "Shake shake",
+    "early": 70,
+    "late": 100,
+    "description": "Baby can hold and shake an object.",
+    "dateReached": ""
+  },
+  {
+    "title": "Steady head",
+    "early": 77,
+    "late": 120,
+    "description": "Baby can hold head steady while sitting.",
+    "dateReached": ""
+  },
+  {
+    "title": "Improved sight",
+    "early": 80,
+    "late": 120,
+    "description": "Baby can recognise people from across the room. Can move both eyes in all directions.",
+    "dateReached": ""
+  },
+  {
+    "title": "Wobbly legs",
+    "early": 84,
+    "late": 120,
+    "description": "Baby can push down with legs and put a little weight on them when being held with feet placed on a firm surface.",
+    "dateReached": ""
+  },
+  {
+    "title": "Reaches for object",
+    "early": 90,
+    "late": 120,
+    "description": "Baby tries to reach for a toy it likes or an object of interest.",
+    "dateReached": ""
+  },
+  {
+    "title": "Hand to mouth",
+    "early": 90,
+    "late": 120,
+    "description": "Baby will move hand to mouth. Don’t leave small objects laying around that might be ingested.",
+    "dateReached": ""
+  },
+  {
+    "title": "Babbling",
+    "early": 90,
+    "late": 130,
+    "description": "Baby babbles, but does so with varying tone and volume. Will try to imitate words heard.",
+    "dateReached": ""
+  },
+  {
+    "title": "Sleeps through",
+    "early": 90,
+    "late": 150,
+    "description": "Baby sleeps through the night. Baby can now store enough food during dinner to make it till morning without feeling hungry.",
+    "dateReached": ""
+  },
+  {
+    "title": "Mini Pushup",
+    "early": 100,
+    "late": 130,
+    "description": "Baby can push up its head and torso fairly high during tummy time.",
+    "dateReached": ""
+  },
+  {
+    "title": "Arm crawl",
+    "early": 100,
+    "late": 160,
+    "description": "Baby can use arms as means of transport.",
+    "dateReached": ""
+  },
+  {
+    "title": "Play time",
+    "early": 120,
+    "late": 150,
+    "description": "Baby likes to play with people.",
+    "dateReached": ""
+  },
+  {
+    "title": "Sitting",
+    "early": 120,
+    "late": 240,
+    "description": "Baby can sit without support.",
+    "dateReached": ""
+  },
+  {
+    "title": "Standing practice",
+    "early": 130,
+    "late": 240,
+    "description": "Baby can pull itself up and/or remain in standing position while holding onto something.",
+    "dateReached": ""
+  },
+  {
+    "title": "Distinguish colors",
+    "early": 140,
+    "late": 180,
+    "description": "Baby can distinguish between different colors.",
+    "dateReached": ""
+  },
+  {
+    "title": "Object permanence",
+    "early": 140,
+    "late": 180,
+    "description": "Baby understands that objects covered or hidden are probably still there.",
+    "dateReached": ""
+  },
+  {
+    "title": "Coordinate hands",
+    "early": 140,
+    "late": 180,
+    "description": "Baby can pass an object from one hand to another.",
+    "dateReached": ""
+  },
+  {
+    "title": "Crawling",
+    "early": 160,
+    "late": 300,
+    "description": "Baby crawls using all four limbs. Make sure you have baby proofed your home.",
+    "dateReached": ""
+  },
+  {
+    "title": "Mouth check",
+    "early": 180,
+    "late": 210,
+    "description": "Baby will place objects in mouth for further inspection.",
+    "dateReached": ""
+  },
+  {
+    "title": "Rolling",
+    "early": 180,
+    "late": 240,
+    "description": "Baby can roll over and back again in both directions.",
+    "dateReached": ""
+  },
+  {
+    "title": "Name recognition",
+    "early": 180,
+    "late": 380,
+    "description": "Baby recognises its own name and reacts.",
+    "dateReached": ""
+  },
+  {
+    "title": "Addresses parents",
+    "early": 180,
+    "late": 390,
+    "description": "Baby addresses mom and dad verbally, e. g. using 'mama' and 'dada'.",
+    "dateReached": ""
+  },
+  {
+    "title": "Walking practice",
+    "early": 190,
+    "late": 390,
+    "description": "Baby can walk while holding on to something.",
+    "dateReached": ""
+  },
+  {
+    "title": "Waving",
+    "early": 210,
+    "late": 390,
+    "description": "Baby will imitate gestures like waving bye-bye",
+    "dateReached": ""
+  },
+  {
+    "title": "Standing",
+    "early": 210,
+    "late": 365,
+    "description": "Baby can stand without support.",
+    "dateReached": ""
+  },
+  {
+    "title": "First teeth",
+    "early": 240,
+    "late": 365,
+    "description": "Baby's upper central incisors break through.",
+    "dateReached": ""
+  },
+  {
+    "title": "Speech recognition",
+    "early": 240,
+    "late": 270,
+    "description": "Baby understands simple statements like “Would you like to some more to eat?”",
+    "dateReached": ""
+  },
+  {
+    "title": "Drinks from cup",
+    "early": 250,
+    "late": 480,
+    "description": "Baby can use cup without dropping it.",
+    "dateReached": ""
+  },
+  {
+    "title": "Opposable thumb",
+    "early": 260,
+    "late": 400,
+    "description": "Baby can pick up a small object using thumb and forefinger.",
+    "dateReached": ""
+  },
+  {
+    "title": "Four teeth",
+    "early": 270,
+    "late": 390,
+    "description": "Baby's upper lateral incisors accompany the existing pair.",
+    "dateReached": ""
+  },
+  {
+    "title": "Acknowledged",
+    "early": 270,
+    "late": 390,
+    "description": "Baby can understand and follow simple commands.",
+    "dateReached": ""
+  },
+  {
+    "title": "Third word",
+    "early": 280,
+    "late": 350,
+    "description": "Baby learns another word besides “mama” or “dada”.",
+    "dateReached": ""
+  },
+  {
+    "title": "First verbal request",
+    "early": 280,
+    "late": 390,
+    "description": "Baby tries to make a request using words and is understood.",
+    "dateReached": ""
+  },
+  {
+    "title": "Gibberish",
+    "early": 290,
+    "late": 350,
+    "description": "Baby practices speech mixing words learned and words invented.",
+    "dateReached": ""
+  },
+  {
+    "title": "Make a friend",
+    "early": 340,
+    "late": 440,
+    "description": "Baby has a meaningful interaction with another baby.",
+    "dateReached": ""
+  },
+  {
+    "title": "My way",
+    "early": 350,
+    "late": 450,
+    "description": "Baby asserts itself, e. g. by being picky about food.",
+    "dateReached": ""
+  },
+  {
+    "title": "Ten words",
+    "early": 350,
+    "late": 540,
+    "description": "Baby can now use ten different words or gestures.",
+    "dateReached": ""
+  },
+  {
+    "title": "Birthday cake",
+    "early": 365,
+    "late": 366,
+    "description": "Baby tastes its first birthday cake. Yummy!",
+    "dateReached": ""
+  },
+  {
+    "title": "Imitation",
+    "early": 450,
+    "late": 700,
+    "description": "Baby imitates gestures and movements it sees from other people.",
+    "dateReached": ""
+  },
+  {
+    "title": "Scribbling",
+    "early": 450,
+    "late": 540,
+    "description": "Baby entertains itself using pen and paper.",
+    "dateReached": ""
+  },
+  {
+    "title": "Walking",
+    "early": 450,
+    "late": 540,
+    "description": "Baby walks well without support.",
+    "dateReached": ""
+  },
+  {
+    "title": "Pointing",
+    "early": 540,
+    "late": 600,
+    "description": "Baby points to show objects to others.",
+    "dateReached": ""
+  },
+  {
+    "title": "Stairs",
+    "early": 540,
+    "late": 570,
+    "description": "Baby can climb stairs without help.",
+    "dateReached": ""
+  },
+  {
+    "title": "Simple phrases",
+    "early": 540,
+    "late": 730,
+    "description": "Baby knows the meaning of and can utter several phrases.",
+    "dateReached": ""
+  },
+  {
+    "title": "Running",
+    "early": 540,
+    "late": 730,
+    "description": "Baby can run.. wheeee…",
+    "dateReached": ""
+  },
+  {
+    "title": "Two-step commands",
+    "early": 580,
+    "late": 730,
+    "description": "Baby can follow commands like “Go to the kitchen and get the cookie jar”.",
+    "dateReached": ""
+  },
+  {
+    "title": "Overhead throw",
+    "early": 580,
+    "late": 730,
+    "description": "Baby can throw small object overhead.",
+    "dateReached": ""
+  },
+  {
+    "title": "Familiar Words",
+    "early": 720,
+    "late": 900,
+    "description": "Baby can name most familiar objects",
+    "dateReached": ""
+  },
+  {
+    "title": "Affectionate",
+    "early": 720,
+    "late": 900,
+    "description": "Baby shows affection to friends and family members without prompting.",
+    "dateReached": ""
+  },
+  {
+    "title": "Bookworm",
+    "early": 720,
+    "late": 900,
+    "description": "Baby can turn single pages of a book",
+    "dateReached": ""
+  },
+  {
+    "title": "Hattrick",
+    "early": 720,
+    "late": 900,
+    "description": "Baby can kick a ball.",
+    "dateReached": ""
+  },
+  {
+    "title": "Second Birthday cake",
+    "early": 730,
+    "late": 731,
+    "description": "Baby is two years old now. Happy birthday!",
+    "dateReached": ""
+  }
+];
+</script>

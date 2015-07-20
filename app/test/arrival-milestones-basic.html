@@ -18,11 +18,10 @@
 </head>
 <body>
 
-  <test-fixture id="milestones">
-    <template>
-      <arrival-milestones></arrival-milestones>
-    </template>
-  </test-fixture>
+  <template is="dom-bind" id="app">
+    <arrival-milestones id="element"></arrival-milestones>
+  </template>
+  <script src="../scripts/app.js"></script>
 
   <script>
 
@@ -34,24 +33,43 @@
 
       setup(function () {
 
-        element = fixture('milestones');
+        element = document.querySelector('#element');
 
       });
 
       teardown(function () {
+        element.milestones = undefined;
       });
 
       /*
        * Check data initilized on element's ready() method
        */
-      test('Element arrival-milestones initialized correctly', function () {
-        expect(element.ready).to.be.a('function');
-        expect(element.selectOptions).to.be.an('object');
-        expect(element.selectOptions).to.have.keys(['year', 'month', 'day', 'years', 'months', 'days']);
-        expect(element.updateTime).to.be.a('function');
-        expect(element.sufficientData).to.be.a('function');
-        expect(element.toggleBabyProperties).to.be.a('function');
-      });
+       test('Element arrival-milestones initialized correctly', function () {
+         expect(element.ready).to.be.a('function');
+         expect(element.selectOptions).to.be.an('object');
+         expect(element.selectOptions).to.have.keys(['year', 'month', 'day', 'years', 'months', 'days']);
+         expect(element.updateTime).to.be.a('function');
+         expect(element.sufficientData).to.be.a('function');
+         expect(element.toggleBabyProperties).to.be.a('function');
+         expect(element.$.milestonesStorage).to.be.an('object');
+       });
+
+       test('Milestones initialize', function () {
+        element.initializeMilestones();
+        expect(element.milestones).to.be.an('object');
+        expect(element.milestones).to.have.keys(['version', 'reached', 'overdue', 'due', 'coming']);
+       }),
+
+       test('Version check', function () {
+         element.initializeMilestones();
+         sinon.spy(app, 'updateRequired');
+
+         element.versionCheck();
+
+         expect(app.updateRequired).to.have.been.calledWith('milestones', element.milestones.version);
+         app.updateRequired.restore();
+       });
+
 
 
     });

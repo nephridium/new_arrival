@@ -1,3 +1,4 @@
+<link rel="import" href="milestones-data.html">
 <link rel="import" href="growth-data.html">
 
 <dom-module id="arrival-milestones">
@@ -7,10 +8,20 @@
     }
   </style>
   <template>
+    <iron-localstorage
+        name="arrival-milestones"
+        id="milestonesStorage"
+        value="{{milestones}}"
+        autoSaveDisabled=true
+        on-iron-localstorage-load="versionCheck"
+        on-iron-localstorage-load-empty="initializeMilestones"
+    ></iron-localstorage>
+
   </template>
 </dom-module>
 
 <script>
+/*globals milestonesData, growthData, _ */
 (function() {
   Polymer({
     is: 'arrival-milestones',
@@ -57,6 +68,40 @@
 
     },
 
+    /*
+     * Checks if storage needs to be re-initialized
+     * useful when structure or default data has changed
+     */
+    versionCheck: function() {
+      console.log('checking...');
+      var version = this.milestones.version || '0.0.0';
+      if (app.updateRequired('milestones', version)) {
+        this.initializeMilestones(true);
+        window.alert('Data structure out of date. Milestones data will reset.');
+      }
+    },
+
+    /*
+     * Initialize milestone object with default milestone data,
+     * then call this.setMilestones() to file milestones into
+     * correct categories
+     */
+    initializeMilestones: function(reload) {
+      this.milestones = {
+        version: '1.1.0',
+        overdue: [],
+        due: [],
+        coming: milestonesData,
+        reached: []
+      };
+//      console.log(this.milestones);
+      this.setMilestones();
+      if (reload) { location.reload(); }
+    },
+
+    /*
+     * Set percentiles object for current gender/age
+     */
     setPercentiles: function(gender, ageInDays) {
       // female, also used if gender not set
       gender = gender || 'female';
@@ -75,6 +120,87 @@
       };
 
     },
+
+    /*
+     * Place milestones into correct categories
+     */
+    setMilestones: function() {
+      // empty dict to file milestones in
+      var m = {
+        overdue: [],
+        due: [],
+        coming: [],
+        reached: []
+      };
+      // flat array of all milestones
+      var flat = [];
+      for (var category in this.milestones) {
+        if (category !== 'version') {
+//          console.log(this.milestones[category]);
+          flat = flat.concat(this.milestones[category]);
+        }
+      }
+      console.log('>>> setMilestones');
+      this.categorizeMilestone(flat, m);
+      this.updateMilestones(m);
+      console.log('<<<');
+    },
+
+    /*
+     * Place given milestone into correct category
+     * called by setMilestones()
+     */
+    categorizeMilestone: function(milestonesFlat, milestones) {
+      console.log('=== before categorizeMilestone\n', milestonesFlat, milestones);
+      var self = this;
+
+      milestones.reached = milestones.reached.concat(
+          _.remove(milestonesFlat, function(milestone) {
+            return milestone.dateReached !== '';
+          })
+      );
+      milestones.coming = milestones.coming.concat(
+          _.remove(milestonesFlat, function(milestone) {
+            return milestone.early > self.ageInDays;
+          })
+      );
+      milestones.overdue = milestones.overdue.concat(
+          _.remove(milestonesFlat, function(milestone) {
+            return milestone.late < self.ageInDays;
+          })
+      );
+      // whatever si left is due
+      milestones.due = milestones.due.concat(milestonesFlat);
+
+      // sort each category
+      milestones.reached = _.sortByAll(milestones.reached, ['dateReached', 'early', 'late', 'title']);
+      milestones.coming = _.sortByAll(milestones.coming, ['early', 'late', 'title']);
+      milestones.overdue = _.sortByAll(milestones.overdue, ['late', 'early', 'title']);
+      milestones.due = _.sortByAll(milestones.due, ['late', 'early', 'title']);
+
+      console.log('=== after\n', milestonesFlat, milestones);
+    },
+
+    /*
+     * Overrides this.milestones using Polymer's array methods
+     */
+    updateMilestones: function(m) {
+      for (var category in this.milestones) {
+        // version property is not a category
+        if (category !== 'version') {
+          console.log('---', category);
+          this.splice('milestones.'+category, 0, this.milestones[category].length);
+
+          // Polymer has no .concat()
+          for (var i=0; i < m[category].length; i++) {
+            this.push('milestones.'+category, m[category][i]);
+          }
+        }
+      }
+//      this.$.milestonesStorage.save();
+
+    },
+
 
   });
 })();

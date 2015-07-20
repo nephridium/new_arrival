@@ -1,3 +1,5 @@
+<link rel="import" href="growth-data.html">
+
 <dom-module id="arrival-milestones">
   <style>
     :host {
@@ -52,6 +54,25 @@
     },
 
     toggleBabyProperties: function() {
+
+    },
+
+    setPercentiles: function(gender, ageInDays) {
+      // female, also used if gender not set
+      gender = gender || 'female';
+
+      this.percentiles = {
+        'height': {
+          'P10': growthData.get('height', ageInDays, gender, 'P10'),
+          'P50': growthData.get('height', ageInDays, gender, 'P50'),
+          'P90': growthData.get('height', ageInDays, gender, 'P90'),
+        },
+        'weight': {
+          'P10': growthData.get('weight', ageInDays, gender, 'P10'),
+          'P50': growthData.get('weight', ageInDays, gender, 'P50'),
+          'P90': growthData.get('weight', ageInDays, gender, 'P90'),
+        }
+      };
 
     },
 

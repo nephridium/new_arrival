@@ -77,7 +77,7 @@
         });
       });
 
-      test('Element arrival-milestones is initialized correctly', function (done) {
+      test('Element arrival-milestones initialized correctly', function (done) {
         request.send({ url: urls.female.height, handleAs: 'json' });
 
         request.completes.then(function() {
@@ -89,6 +89,32 @@
           expect(element.updateTime).to.be.a('function');
           expect(element.sufficientData).to.be.a('function');
           expect(element.toggleBabyProperties).to.be.a('function');
+          done();
+        }).catch(function(e) {
+          done(new Error(e));
+        });
+      });
+
+      test('Check female weight data', function (done) {
+        var gender = 'female';
+        var dimension = 'weight';
+        var maxDeviation = 0.1;
+
+        request.send({ url: urls[gender][dimension], handleAs: 'json' });
+
+        request.completes.then(function() {
+          var delta;
+          for (var i=0; i < 10; i++) {
+            element.setPercentiles(gender, i);
+            delta = element.percentiles[dimension].P50 - request.response[i].P50;
+            console.log(
+                i,
+                Math.round(element.percentiles[dimension].P50 * 1e4) / 1e4,
+                Math.round(request.response[i].P50 * 1e4) / 1e4,
+                'Δ ' + delta.toFixed(4)
+            );
+            expect(delta).to.be.below(maxDeviation);
+          }
           done();
         }).catch(function(e) {
           done(new Error(e));

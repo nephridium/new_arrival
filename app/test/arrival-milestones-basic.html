@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>arrival-milestones tests</title>
+
+  <script src="../../bower_components/webcomponentsjs/webcomponents.min.js"></script>
+  <script src="../../bower_components/web-component-tester/browser.js"></script>
+  <script src="../../bower_components/test-fixture/test-fixture-mocha.js"></script>
+  <link rel="import" href="../../bower_components/polymer/polymer.html">
+  <link rel="import" href="../../bower_components/test-fixture/test-fixture.html">
+
+  <!-- Helper elements -->
+
+  <!-- Elements to test -->
+  <link rel="import" href="../elements/arrival-milestones/arrival-milestones.html">
+
+</head>
+<body>
+
+  <test-fixture id="milestones">
+    <template>
+      <arrival-milestones></arrival-milestones>
+    </template>
+  </test-fixture>
+
+  <script>
+
+    suite('arrival-milestones tests', function() {
+      var element;
+
+      var genders = ['female', 'male'];
+      var dimensions = ['height', 'weight'];
+
+      setup(function () {
+
+        element = fixture('milestones');
+
+      });
+
+      teardown(function () {
+      });
+
+      /*
+       * Check data initilized on element's ready() method
+       */
+      test('Element arrival-milestones initialized correctly', function () {
+        expect(element.ready).to.be.a('function');
+        expect(element.selectOptions).to.be.an('object');
+        expect(element.selectOptions).to.have.keys(['year', 'month', 'day', 'years', 'months', 'days']);
+        expect(element.updateTime).to.be.a('function');
+        expect(element.sufficientData).to.be.a('function');
+        expect(element.toggleBabyProperties).to.be.a('function');
+      });
+
+
+    });
+  </script>
+
+</body>
+</html>

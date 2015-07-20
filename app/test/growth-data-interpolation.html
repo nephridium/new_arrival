@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-  <title>my-greeting-basic</title>
+  <title>Growth data interpolation tests</title>
 
   <script src="../../bower_components/webcomponentsjs/webcomponents.min.js"></script>
   <script src="../../bower_components/web-component-tester/browser.js"></script>
@@ -81,20 +81,15 @@
       });
 
       /*
-       * Check data initilized on element's ready() method
+       * Check whether source data is covered by element.formulaValidity
        */
-      test('Element arrival-milestones initialized correctly', function (done) {
+      test('Source data is covered by element.formulaValidity', function (done) {
         request.send({ url: urls.female.height, handleAs: 'json' });
 
         request.completes.then(function() {
           expect(element.ready).to.be.a('function');
           expect(element.formulaValidity).to.be.above(0);
           expect(request.response.length).to.be.at.least(element.formulaValidity);
-          expect(element.selectOptions).to.be.an('object');
-          expect(element.selectOptions).to.have.keys(['year', 'month', 'day', 'years', 'months', 'days']);
-          expect(element.updateTime).to.be.a('function');
-          expect(element.sufficientData).to.be.a('function');
-          expect(element.toggleBabyProperties).to.be.a('function');
           done();
         }).catch(function(e) {
           done(new Error(e));
@@ -121,8 +116,10 @@
             var delta;
             for (var i=0; i <= count; i++) {
               element.setPercentiles(gender, i);
+              expect(element.percentiles[dimension].P50)
+                .to.be.closeTo(request.response[i].P50, maxDeviation);
+/* Show deviation visually in console *
               delta = Math.abs(element.percentiles[dimension].P50-request.response[i].P50);
-/* Show deviation viaually in console *
               var visualDelta = '';
               for (var n=0; n < Math.round(delta*1e1); n++) {
                 visualDelta += '*';
@@ -135,7 +132,6 @@
                     delta.toFixed(4)
                 );
 /**/
-              expect(delta).to.be.below(maxDeviation);
             }
             done();
 

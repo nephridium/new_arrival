@@ -14,6 +14,7 @@
   <link rel="import" href="../../bower_components/iron-ajax/iron-request.html">
 
   <!-- Elements to test -->
+  <link rel="import" href="../elements/arrival-milestones/arrival-milestones.html">
 
 </head>
 <body>
@@ -21,6 +22,12 @@
   <test-fixture id="data-request">
     <template>
       <iron-request></iron-request>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="milestones">
+    <template>
+      <arrival-milestones></arrival-milestones>
     </template>
   </test-fixture>
 
@@ -52,7 +59,7 @@
           }
         };
 
-        // element = fixture('milestones');
+        element = fixture('milestones');
 
       });
 
@@ -64,6 +71,24 @@
 
         request.completes.then(function() {
           expect(request.response).to.be.an('array');
+          done();
+        }).catch(function(e) {
+          done(new Error(e));
+        });
+      });
+
+      test('Element arrival-milestones is initialized correctly', function (done) {
+        request.send({ url: urls.female.height, handleAs: 'json' });
+
+        request.completes.then(function() {
+          expect(element.ready).to.be.a('function');
+          expect(element.formulaValidity).to.be.above(0);
+          expect(request.response.length).to.be.at.least(element.formulaValidity);
+          expect(element.selectOptions).to.be.an('object');
+          expect(element.selectOptions).to.have.keys(['year', 'month', 'day', 'years', 'months', 'days']);
+          expect(element.updateTime).to.be.a('function');
+          expect(element.sufficientData).to.be.a('function');
+          expect(element.toggleBabyProperties).to.be.a('function');
           done();
         }).catch(function(e) {
           done(new Error(e));

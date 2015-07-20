@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>my-greeting-basic</title>
+
+  <script src="../../bower_components/webcomponentsjs/webcomponents.min.js"></script>
+  <script src="../../bower_components/web-component-tester/browser.js"></script>
+  <script src="../../bower_components/test-fixture/test-fixture-mocha.js"></script>
+  <link rel="import" href="../../bower_components/polymer/polymer.html">
+  <link rel="import" href="../../bower_components/test-fixture/test-fixture.html">
+
+  <!-- Helper elements -->
+  <link rel="import" href="../../bower_components/iron-ajax/iron-request.html">
+
+  <!-- Elements to test -->
+
+</head>
+<body>
+
+  <test-fixture id="data-request">
+    <template>
+      <iron-request></iron-request>
+    </template>
+  </test-fixture>
+
+  <script>
+
+    suite('Growth data interpolation tests', function() {
+      var jsonResponseHeaders;
+      var urls;
+      var request;
+      var element;
+
+      var genders = ['female', 'male'];
+      var dimensions = ['height', 'weight'];
+
+      setup(function () {
+        jsonResponseHeaders = {
+          'Content-Type': 'application/json'
+        };
+
+        request = fixture('data-request');
+        urls = {
+          female: {
+            height: '../elements/arrival-milestones/lhfa_girls_p_exp.json',
+            weight: '../elements/arrival-milestones/wfa_girls_p_exp.json'
+          },
+          male: {
+            height: '../elements/arrival-milestones/lhfa_boys_p_exp.json',
+            weight: '../elements/arrival-milestones/wfa_boys_p_exp.json'
+          }
+        };
+
+        // element = fixture('milestones');
+
+      });
+
+      teardown(function () {
+      });
+
+      test('Retrieve source data correctly', function (done) {
+        request.send({ url: urls.female.height, handleAs: 'json' });
+
+        request.completes.then(function() {
+          expect(request.response).to.be.an('array');
+          done();
+        }).catch(function(e) {
+          done(new Error(e));
+        });
+      });
+
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+title,early,late,description
+Post Birth Vaccination,0.0,10.5,"Newborns are vaccinated within, their first few days in the hospital. Check your vaccination schedule for more information."
+Month 1 Vaccination,30.0,40.0,Vaccination on the first month.
+Month 2 Vaccination,60.88,70.88,Vaccination on the second month.
+Month 4 Vaccination,121.76,131.76,Vaccination on the forth month.
+Month 6 Vaccination,182.64,192.64,Vaccination on the sixth month.
+Month 12 Vaccination,365.28,375.28,Vaccination on the 12th month.
+Month 15 Vaccination,456.6,466.6,Vaccination on the 15th month.
+Month 18 Vaccination,547.92,557.92,Vaccination on the 18th month.
+Rooting Reflex,0.0,7.0,Essential for feeding. If you stroke the side of the baby’s cheek with your finger it will turn its head toward it and open its mouth wide. This reflex usually disappears around month 4.
+Startle Reflex,0.0,30.0,"Also known as Moro reflex. Baby extends arms and legs when startled; it is triggered by sudden movements registered by the baby’s inner ear, or by loud noises. It usually disappears around month 2."
+Stepping Reflex,0.0,30.0,When holding your baby under its armpits and letting its feet touch the floor (make sure baby's head is supported) it will do stepping movements. It usually disappears again around month 2.
+Grasping Reflex,0.0,30.0,Stroking the baby’s palm will trigger a grasp that can be fairly tight. It usually disappears around month 3-4.
+Basic body language,0.0,7.0,Baby moves arms and legs when agitated. Will fuss or cry when uncomfortable or hungry.
+Hearing,5.0,30.0,Baby's will react to loud noises and to certain other sounds.
+Umbilical stump detaches,7.0,21.0,"Baby's umbilical stump detaches. Until then clean it regularly after changing diapers. There is currently no consensus on whether or not dipping swabs dipped in rubbing alcohol is beneficial. Though alcohol certainly kills germs, some studies suggest it may take longer for the stump to fall off.  Please consult your doctor if you are unsure."
+Holds heads up,30.0,60.0,Baby can hold head up to 45 degrees for a short while.
+Smiling,30.0,60.0,Baby smiles spontaneously when comfortable or when hearing parent's voice.
+Hands,30.0,60.0,Baby notices its hands and follows own hand movements with eyes.
+Raises head,30.0,60.0,Baby raises head when lying on tummy.
+Tracking,30.0,90.0,Baby follows people or objects with eyes and head movements.
+Micro Pushup,42.0,90.0,When on tummy baby pushes up its head and torso slightly using its arm.
+Cooing,50.0,90.0,Baby makes cooing sounds and utters simple words like goo-ga
+Social smile,60.0,90.0,"Baby smiles while interacting with people, often in response to someone smiling at them."
+LOL,60.0,90.0,Baby laughs out loud at parent or toy it likes.
+Shake shake,70.0,100.0,Baby can hold and shake an object.
+Steady head,77.0,120.0,Baby can hold head steady while sitting.
+Improved sight,80.0,120.0,Baby can recognise people from across the room. Can move both eyes in all directions.
+Wobbly legs,84.0,120.0,Baby can push down with legs and put a little weight on them when being held with feet placed on a firm surface.
+Reaches for object,90.0,120.0,Baby tries to reach for a toy it likes or an object of interest.
+Hand to mouth,90.0,120.0,Baby will move hand to mouth. Don’t leave small objects laying around that might be ingested.
+Babbling,90.0,130.0,"Baby babbles, but does so with varying tone and volume. Will try to imitate words heard."
+Sleeps through,90.0,150.0,Baby sleeps through the night. Baby can now store enough food during dinner to make it till morning without feeling hungry.
+Mini Pushup,100.0,130.0,Baby can push up its head and torso fairly high during tummy time.
+Arm crawl,100.0,160.0,Baby can use arms as means of transport.
+Play time,120.0,150.0,Baby likes to play with people.
+Sitting,120.0,240.0,Baby can sit without support.
+Standing practise,130.0,240.0,Baby can pull itself up and/or remain in standing position while holding onto something.
+Distinguish colors,140.0,180.0,Baby can distinguish between different colors.
+Object permanence,140.0,180.0,Baby understands that objects covered or hidden are probably still there.
+Coordinate hands,140.0,180.0,Baby can pass an object from one hand to another.
+Crawling,160.0,300.0,Baby crawls using all four limbs. Make sure you have baby proofed your home.
+Mouth check,180.0,210.0,Baby will place objects in mouth for further inspection.
+Rolling,180.0,240.0,Baby can roll over and back again in both directions.
+Name recognition,180.0,380.0,Baby recognises its own name and reacts.
+Addresses parents,180.0,390.0,"Baby addresses mom and dad verbally, e. g. using 'mama' and 'dada'."
+Walking practise,190.0,390.0,Baby can walk while holding on to something.
+Waving,210.0,390.0,Baby will imitate gestures like waving bye-bye
+Standing,210.0,365.0,Baby can stand without support.
+First teeth,240.0,365.0,Baby's upper central incisors break through.
+Speech recognition,240.0,270.0,Baby understands simple statements like “Would you like to some more to eat?”
+Drinks from cup,250.0,480.0,Baby can use cup without dropping it.
+Opposable thumb,260.0,400.0,Baby can pick up a small object using thumb and forefinger.
+Four teeth,270.0,390.0,Baby's upper lateral incisors accompany the existing pair.
+Acknowledged,270.0,390.0,Baby can understand and follow simple commands.
+Third word,280.0,350.0,Baby learns another word besides “mama” or “dada”.
+First verbal request,280.0,390.0,Baby tries to make a request using words and is understood.
+Gibberish,290.0,350.0,Baby practices speech mixing words learned and words invented.
+Make a friend,340.0,440.0,Baby has a meaningful interaction with another baby.
+My way,350.0,450.0,"Baby asserts itself, e. g. by being picky about food."
+Ten words,350.0,540.0,Baby can now use ten different words or gestures.
+Birthday cake,365.0,366.0,Baby tastes its first birthday cake. Yummy!
+Imitation,450.0,700.0,Baby imitates gestures and movements it sees from other people.
+Scribbling,450.0,540.0,Baby entertains itself using pen and paper.
+Walking,450.0,540.0,Baby walks well without support.
+Pointing,540.0,600.0,Baby points to show objects to others.
+Stairs,540.0,570.0,Baby can climb stairs without help.
+Simple phrases,540.0,730.0,Baby knows the meaning of and can utter several phrases.
+Running,540.0,730.0,Baby can run.. wheeee…
+Two-step commands,580.0,730.0,Baby can follow commands like “Go to the kitchen and get the cookie jar”.
+Overhead throw,580.0,730.0,Baby can throw small object overhead.
+Familiar Words,720.0,900.0,Baby can name most familiar objects
+Affectionate,720.0,900.0,Baby shows affection to friends and family members without prompting.
+Bookworm,720.0,900.0,Baby can turn single pages of a book
+Hattrick,720.0,900.0,Baby can kick a ball.
+Second Birthday cake,730.0,731.0,Baby is two years old now. Happy birthday!

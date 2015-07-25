@@ -33,7 +33,7 @@
 
   <script>
 
-    suite('Growth data interpolation tests', function() {
+    describe('Growth data interpolation', function() {
       var jsonResponseHeaders;
       var urls;
       var request;
@@ -42,7 +42,11 @@
       var genders = ['female', 'male'];
       var dimensions = ['height', 'weight'];
 
-      setup(function () {
+      before(function() {
+        element = fixture('milestones');
+      });
+
+      beforeEach(function () {
         jsonResponseHeaders = {
           'Content-Type': 'application/json'
         };
@@ -58,18 +62,12 @@
             weight: '../elements/arrival-milestones/wfa_boys_p_exp.json'
           }
         };
-
-        element = fixture('milestones');
-
-      });
-
-      teardown(function () {
       });
 
       /*
        * Check whether growth data source files are read correctly
        */
-      test('Retrieve source data correctly', function (done) {
+      it('retrieves source data correctly', function (done) {
         request.send({ url: urls.female.height, handleAs: 'json' });
 
         request.completes.then(function() {
@@ -83,7 +81,7 @@
       /*
        * Check whether source data covers by element.formulaValidity
        */
-      test('Source data covers element.formulaValidity', function (done) {
+      it('makes sure source data covers element.formulaValidity', function (done) {
         request.send({ url: urls.female.height, handleAs: 'json' });
 
         request.completes.then(function() {
@@ -147,7 +145,7 @@
       genders.forEach(function(gender) {
         dimensions.forEach(function(dim) {
           console.log(gender, dim);
-          test('Check '+gender+' '+dim+' data', compareGrowthData(gender, dim));
+          it('checks '+gender+' '+dim+' data', compareGrowthData(gender, dim));
         });
       });
 

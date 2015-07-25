@@ -11,9 +11,11 @@
   <link rel="import" href="../../bower_components/test-fixture/test-fixture.html">
 
   <!-- Helper elements -->
+  <script src="../../bower_components/iron-test-helpers/mock-interactions.js"></script>
 
   <!-- Elements to test -->
   <link rel="import" href="../elements/arrival-milestones/arrival-milestones.html">
+  <link rel="import" href="../elements/arrival-milestones/arrival-category-header.html">
 
 </head>
 <body>
@@ -25,54 +27,67 @@
 
   <script>
 
-    suite('arrival-milestones tests', function() {
+    describe('<arrival-milestones>', function() {
       var element;
 
       var genders = ['female', 'male'];
       var dimensions = ['height', 'weight'];
 
-      setup(function () {
+      // iron-localstorage save() not exposed by Polymer to testing env
+      HTMLElement.prototype.save = function() {};
+
+      beforeEach(function () {
 
         element = document.querySelector('#element');
+        element.birthYear = undefined;
+        element.birthMonth = undefined;
+        element.birthDate = undefined;
+        element.ageInDays = undefined;
 
       });
 
-      teardown(function () {
+      afterEach(function () {
         element.milestones = undefined;
       });
 
       /*
        * Check data initilized on element's ready() method
        */
-       test('Element arrival-milestones initialized correctly', function () {
-         expect(element.ready).to.be.a('function');
-         expect(element.selectOptions).to.be.an('object');
-         expect(element.selectOptions).to.have.keys(['year', 'month', 'day', 'years', 'months', 'days']);
-         expect(element.updateTime).to.be.a('function');
-         expect(element.sufficientData).to.be.a('function');
-         expect(element.toggleBabyProperties).to.be.a('function');
-         expect(element.$.milestonesStorage).to.be.an('object');
-       });
+      it('inits element correctly', function () {
+        expect(element.ready).to.be.a('function');
+        expect(element.selectOptions).to.be.an('object');
+        expect(element.selectOptions).to.have.keys(['year', 'month', 'day', 'years', 'months', 'days']);
+        expect(element.updateTime).to.be.a('function');
+        expect(element.sufficientData).to.be.a('function');
+        expect(element.toggleBabyProperties).to.be.a('function');
+        expect(element.$.milestonesStorage).to.be.an('object');
+      });
 
-       test('Milestones initialize', function () {
+      it('inits milestones correctly', function () {
+        var defaultMilestonesAmount = milestonesData.length;  // default data used on initialization
+        var milestonesAmount = 0;
+
         element.initializeMilestones();
-        expect(element.milestones).to.be.an('object');
-        expect(element.milestones).to.have.keys(['version', 'reached', 'overdue', 'due', 'coming']);
-       }),
+        expect(element.milestones).to.be.an('object')
+          .and.to.have.keys(['version', 'reached', 'overdue', 'due', 'coming']);
+        ['reached', 'overdue', 'due', 'coming'].forEach(function(category) {
+          milestonesAmount += element.milestones[category].length;
+        })
+        expect(milestonesAmount).to.equal(defaultMilestonesAmount);
+      }),
 
-       test('Version check', function () {
-         element.initializeMilestones();
-         sinon.spy(app, 'updateRequired');
+      it('performs version check', function () {
+        element.initializeMilestones();
+        sinon.spy(app, 'updateRequired');
 
-         element.versionCheck();
+        element.versionCheck();
 
-         expect(app.updateRequired).to.have.been.calledWith('milestones', element.milestones.version);
-         app.updateRequired.restore();
-       });
-
-
+        expect(app.updateRequired).to.have.been.calledWith('milestones', element.milestones.version);
+        app.updateRequired.restore();
+      });
 
     });
+
   </script>
 
 </body>

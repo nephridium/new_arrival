@@ -13,6 +13,22 @@
     return (app.minVersion[datastore] > version);
   };
 
+  app.toastMilestoneAddedToReached = function() {
+    document.querySelector('#milestone-added-to-reached').show();
+  };
+
+  app.toastMilestoneRemovedFromReached = function() {
+    document.querySelector('#milestone-removed-from-reached').show();
+  };
+
+  app.toastAlreadyFullyCollapsed = function() {
+    document.querySelector('#already-fully-collapsed').show();
+  };
+
+  app.toastAlreadyFullyExpanded = function() {
+    document.querySelector('#already-fully-expanded').show();
+  };
+
 
   // Listen for template bound event to know when bindings
   // have resolved and content has been stamped to the page

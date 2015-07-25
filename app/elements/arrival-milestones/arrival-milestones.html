@@ -1,3 +1,5 @@
+<link rel="import" href="../app-globals/app-globals.html">
+<link rel="import" href="arrival-category-header.html">
 <link rel="import" href="milestones-data.html">
 <link rel="import" href="growth-data.html">
 
@@ -6,8 +8,80 @@
     :host {
       display: block;
     }
+
+    paper-button {
+      margin: 2px;
+      width: 100%;
+    }
+    .section-title {
+      background-color: #f3f3f3;
+    }
+    .section-title:hover {
+      background-color: #dadada;
+    }
+    .section-empty {
+      background-color: #f8f8f8;
+    }
+    .milestone-reached {
+      background-color: #edf;
+    }
+    .milestone-overdue {
+      background-color: #fff0d0;
+    }
+    .milestone-due {
+      background-color: #dfd;
+    }
+    .milestone-coming {
+      background-color: #def;
+    }
+    .milestone-info {
+      color: #888;
+      font-size: smaller;
+      text-transform: none;
+    }
+
+    .settings-item {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      margin-top: 16px;
+      margin-bottom: 16px;
+    }
+
+    .settings-label {
+      @apply(--layout-inline);
+      font-size: 16px;
+      color: #666;
+    }
+    .settings-box-label {
+      color: #aaa;
+    }
+    .settings-select {
+      font-size: 16px;
+    }
+
+    .full-width {
+      width: 100%;
+    }
+
+    .inline {
+      display: inline;
+    }
+
+    .info {
+      color: #acf;
+      background-color: #ffffda;
+      padding: 8px 16px;
+      border: 1px solid #dedede;
+      border-radius: 8px;
+    }
+    .debug {
+      font-size: 10px;
+      display: none; /**/
+    }
   </style>
   <template>
+    <app-globals globals="{{globals}}" data="{{data}}"></app-globals>
+
     <iron-localstorage
         name="arrival-milestones"
         id="milestonesStorage"
@@ -17,16 +91,540 @@
         on-iron-localstorage-load-empty="initializeMilestones"
     ></iron-localstorage>
 
+
+    <!-- Title with baby name, if click it should open baby properties section -->
+    <paper-button
+        id="baby-properties-title"
+        class="section-title"
+        title="Click to toggle baby details"
+        noink
+        raised
+        on-click="toggleBabyProperties"
+        >
+      <span hidden="{{globals.babyname}}">
+        <span hidden="{{globals.gender}}">Your baby</span>
+        <span hidden="{{!globals.gender}}">Baby</span>
+        <span>{{genderName}}</span>
+      </span>
+      <span>{{globals.babyname}}</span>
+    </paper-button>
+
+    <!-- Baby properties section -->
+    <iron-collapse
+        id="babyProperties"
+        opened
+        >
+
+      <paper-input
+          id="inputBabyname"
+          value="{{globals.babyname::input}}"
+          label="Baby's Name"
+          validator="letters-only"
+          auto-validate
+      ></paper-input>
+
+      <div class="settings-item">
+        <div class="settings-label">Gender</div>
+
+        <div class="flex"></div>
+
+        <select id="inputGender" class="settings-select" value="{{globals.gender::change}}">
+          <option value="">---</option>
+          <option value="female">female</option>
+          <option value="male">male</option>
+        </select>
+      </div>
+
+      <div class="settings-item">
+        <div class="settings-label">Birth Date</div>
+
+        <div class="flex"></div>
+
+        <select class="settings-select" value="{{birthYear::change}}">
+          <option value="">---</option>
+          <template is="dom-repeat" items="{{selectOptions.years}}">
+            <option value="{{item}}">{{item}}</option>
+          </template>
+        </select>
+        <select class="settings-select" value="{{birthMonth::change}}">
+          <option value="">---</option>
+          <template is="dom-repeat" items="{{selectOptions.months}}">
+            <option value="{{item}}">{{item}}</option>
+          </template>
+        </select>
+        <select class="settings-select" value="{{birthDay::change}}">
+          <option value="">---</option>
+          <template is="dom-repeat" items="{{selectOptions.days}}">
+            <option value="{{item}}">{{item}}</option>
+          </template>
+        </select>
+      </div>
+
+      <div class="debug">
+        Current date: <span>{{now}}</span><br/>
+        Age: <span>{{toFixed(ageInDays, 2)}}</span> days
+      </div>
+
+      <div class="info">
+        <div class="settings-item" hidden="{{!globals.babyname}}">
+          <div class="settings-box-label">
+            Baby &nbsp;<span hidden="{{!globals.gender}}">{{genderName}}</span>
+          </div>
+          <div class="flex"></div>
+          <div>
+            <span>{{globals.babyname}}</span>&nbsp;
+          </div>
+        </div>
+
+        <div hidden="{{!globals.birthdate}}">
+          <div class="settings-item">
+            <div class="settings-box-label">
+              Born on
+            </div>
+            <div class="flex"></div>
+            <div>
+              <span>{{formatDate(globals.birthdate)}}</span>
+            </div>
+          </div>
+
+          <div class="settings-item">
+            <div class="settings-box-label">
+              Age
+            </div>
+            <div class="flex"></div>
+            <div>
+              <span>{{toFixed(ageInDays, 0)}}</span> days
+            </div>
+          </div>
+
+          <div hidden="{{!coveredByFormulas(globals.gender, ageInDays)}}">
+            <div class="settings-item">
+              <div class="settings-box-label">
+                Median height at this age
+              </div>
+              <div class="flex"></div>
+              <div>
+                <span>{{toFixed(percentiles.height.P50, 1)}}</span> cm
+              </div>
+            </div>
+
+            <div class="settings-item">
+              <div class="settings-box-label">
+                Median weight at this age
+              </div>
+              <div class="flex"></div>
+              <div>
+                <span>{{toFixed(percentiles.weight.P50, 1)}}</span> kg
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    <!-- Reset Milestones button --
+    <paper-button
+        class="settings-button"
+        noink
+        raised
+        on-click="initializeMilestones"
+        >
+      Reset Milestones
+    </paper-button>
+<!-- -->
+    </iron-collapse>
+
+
+    <!-------------------------------------------- REACHED -->
+    <div>
+      <arrival-category-header
+          id="header-reached"
+          class="inline"
+          title="Milestones reached"
+          category="reached"
+          on-click="toggleCategory"
+          >
+      </arrival-category-header>
+
+      <iron-collapse id="collapsible-reached">
+
+        <!-- Empty indicator -->
+        <template is="dom-if" if="{{!milestones.reached.length}}">
+          <paper-button class="section-empty" noink>
+            None yet
+          </paper-button>
+        </template>
+
+        <!-- Rest of list -->
+        <iron-collapse opened="{{!showSome(globals.state.reached)}}">
+          <template is="dom-repeat" items="{{milestones.reached}}"
+              filter="wasNotRecently" observe="late">
+            <div>
+
+              <paper-button
+                  class="milestone-reached"
+                  on-click="toggleReached"
+                  title="{{item.description}}"
+                  raised
+                  noink
+              >
+                <span>{{item.title}}</span>
+                <br/>
+                <span class="milestone-info">
+                  achieved on <span>{{formatDate(item.dateReached)}}</span>
+                </span>
+                <span class="debug">{{toFixed(item.early, 1)}}</span>
+                <span class="debug">{{toFixed(item.late, 1)}}</span>
+              </paper-button>
+
+            </div>
+          </template>
+        </iron-collapse>
+
+        <!-- Soon list -->
+        <template is="dom-repeat" items="{{milestones.reached}}"
+            filter="wasRecently" observe="late">
+          <div>
+
+            <paper-button
+                class="milestone-reached"
+                on-click="toggleReached"
+                title="{{item.description}}"
+                raised
+                noink
+            >
+              <span>{{item.title}}</span>
+              <br/>
+              <span class="milestone-info">
+                achieved on <span>{{formatDate(item.dateReached)}}</span>
+              </span>
+              <span class="debug">{{toFixed(item.early, 1)}}</span>
+              <span class="debug">{{toFixed(item.late, 1)}}</span>
+            </paper-button>
+
+          </div>
+        </template>
+
+        <!-- More button -->
+        <template is="dom-if" if="{{milestones.reached.length}}">
+          <paper-button class="section-empty" noink
+                        on-click="toggleCategory"
+                        category="reached"
+                        action="more"
+              hidden$="{{!showSome(globals.state.reached)}}">
+            More
+          </paper-button>
+        </template>
+
+
+        <!-- Rest of list -->
+        <div hidden$="{{showSome(globals.state.reached)}}">
+          <!-- Less button -->
+          <template is="dom-if" if="{{milestones.reached.length}}">
+            <paper-button class="section-empty" noink
+                          on-click="toggleCategory"
+                          category="reached"
+                          action="less"
+                >
+              Less
+            </paper-button>
+          </template>
+        </div>
+
+      </iron-collapse>
+    </div>
+
+    <!-------------------------------------------- OVERDUE -->
+    <div>
+      <arrival-category-header
+          class="inline"
+          title="Milestones overdue"
+          category="overdue"
+          on-click="toggleCategory"
+          >
+      </arrival-category-header>
+
+      <iron-collapse id="collapsible-overdue" opened>
+
+        <!-- Empty indicator -->
+        <template is="dom-if" if="{{!milestones.overdue.length}}">
+          <paper-button class="section-empty" noink>
+            None
+          </paper-button>
+        </template>
+
+        <!-- Rest of list -->
+        <iron-collapse opened="{{!showSome(globals.state.overdue)}}">
+          <template is="dom-repeat" items="{{milestones.overdue}}"
+              filter="wasNotRecently" observe="late">
+            <div>
+
+              <paper-button
+                  class="milestone-overdue"
+                  on-click="toggleReached"
+                  title="{{item.description}}"
+                  raised
+                  noink
+              >
+                <span>{{item.title}}</span>
+                <br/>
+                <span class="milestone-info">
+                  about <span>{{daysUntilString(item.late)}}</span> overdue
+                </span>
+                <span class="debug">{{toFixed(item.early, 1)}}</span>
+                <span class="debug">{{toFixed(item.late, 1)}}</span>
+              </paper-button>
+
+            </div>
+          </template>
+        </iron-collapse>
+
+        <!-- Soon list -->
+        <template is="dom-repeat" items="{{milestones.overdue}}"
+            filter="wasRecently" observe="late">
+          <div>
+
+            <paper-button
+                class="milestone-overdue"
+                on-click="toggleReached"
+                title="{{item.description}}"
+                raised
+                noink
+            >
+              <span>{{item.title}}</span>
+              <br/>
+              <span class="milestone-info">
+                about <span>{{daysUntilString(item.late)}}</span> overdue
+              </span>
+              <span class="debug">{{toFixed(item.early, 1)}}</span>
+              <span class="debug">{{toFixed(item.late, 1)}}</span>
+            </paper-button>
+
+          </div>
+        </template>
+
+        <!-- More button -->
+        <template is="dom-if" if="{{milestones.overdue.length}}">
+          <paper-button class="section-empty" noink
+                        on-click="toggleCategory"
+                        category="overdue"
+                        action="more"
+              hidden$="{{!showSome(globals.state.overdue)}}">
+            More
+          </paper-button>
+        </template>
+
+
+        <!-- Rest of list -->
+        <div hidden$="{{showSome(globals.state.overdue)}}">
+          <!-- Less button -->
+          <template is="dom-if" if="{{milestones.overdue.length}}">
+            <paper-button class="section-empty" noink
+                          on-click="toggleCategory"
+                          category="overdue"
+                          action="less"
+                >
+              Less
+            </paper-button>
+          </template>
+        </div>
+
+      </iron-collapse>
+    </div>
+
+    <!-------------------------------------------- DUE -->
+    <div>
+      <arrival-category-header
+          class="inline"
+          title="Milestones due"
+          category="due"
+          on-click="toggleCategory"
+          >
+      </arrival-category-header>
+
+      <iron-collapse id="collapsible-due" opened>
+
+        <template is="dom-if" if="{{!milestones.due.length}}">
+          <paper-button class="section-empty" noink>
+            Currently none
+          </paper-button>
+        </template>
+
+        <template is="dom-repeat" items="{{milestones.due}}">
+          <div>
+
+            <paper-button
+                class="milestone-due"
+                on-click="toggleReached"
+                title="{{item.description}}"
+                raised
+                noink
+            >
+              <span>{{item.title}}</span>
+              <br/>
+              <span class="milestone-info">
+                about <span>{{daysUntilString(item.late)}}</span> remaining
+              </span>
+              <span class="debug">{{toFixed(item.early, 1)}}</span>
+              <span class="debug">{{toFixed(item.late, 1)}}</span>
+            </paper-button>
+
+          </div>
+        </template>
+      </iron-collapse>
+    </div>
+
+    <!-------------------------------------------- COMING UP -->
+    <div>
+      <arrival-category-header
+          class="inline"
+          title="Milestones coming up"
+          category="coming"
+          on-click="toggleCategory"
+          >
+      </arrival-category-header>
+
+      <iron-collapse id="collapsible-coming" opened>
+
+        <!-- Empty indicator -->
+        <template is="dom-if" if="{{!milestones.coming.length}}">
+          <paper-button class="section-empty" noink>
+            Currently none
+          </paper-button>
+        </template>
+
+        <!-- Soon list -->
+        <template is="dom-repeat" items="{{milestones.coming}}"
+            filter="isSoon" observe="early">
+          <div>
+
+            <paper-button
+                class="milestone-coming"
+                on-click="toggleReached"
+                title="{{item.description}}"
+                raised
+                noink
+            >
+              <span>{{item.title}}</span>
+              <br/>
+              <span class="milestone-info">
+                <span>{{daysUntil(item.early)}}</span>
+                to
+                <span>{{daysUntil(item.late)}}</span> days from now
+              </span>
+              <span class="debug">{{toFixed(item.early, 1)}}</span>
+              <span class="debug">{{toFixed(item.late, 1)}}</span>
+            </paper-button>
+
+          </div>
+        </template>
+
+        <!-- More button -->
+        <template is="dom-if" if="{{milestones.coming.length}}">
+          <paper-button class="section-empty" noink
+                        on-click="toggleCategory"
+                        category="coming"
+                        action="more"
+              hidden$="{{!showSome(globals.state.coming)}}">
+            More
+          </paper-button>
+        </template>
+
+
+        <!-- Rest of list -->
+        <iron-collapse opened="{{!showSome(globals.state.coming)}}">
+          <template is="dom-repeat" items="{{milestones.coming}}"
+              filter="isNotSoon" observe="early">
+            <div>
+
+              <paper-button
+                  class="milestone-coming"
+                  on-click="toggleReached"
+                  title="{{item.description}}"
+                  raised
+                  noink
+              >
+                <span>{{item.title}}</span>
+                <br/>
+                <span class="milestone-info">
+                  <span>{{daysUntil(item.early)}}</span>
+                  to
+                  <span>{{daysUntil(item.late)}}</span> days from now
+                </span>
+                <span class="debug">{{toFixed(item.early, 1)}}</span>
+                <span class="debug">{{toFixed(item.late, 1)}}</span>
+              </paper-button>
+
+            </div>
+          </template>
+
+          <!-- Less button -->
+          <template is="dom-if" if="{{milestones.coming.length}}">
+            <paper-button class="section-empty" noink
+                          on-click="toggleCategory"
+                          category="coming"
+                          action="less"
+                >
+              Less
+            </paper-button>
+          </template>
+
+        </iron-collapse>
+      </iron-collapse>
+    </div>
+
   </template>
 </dom-module>
 
 <script>
-/*globals milestonesData, growthData, _ */
+/*globals month, milestonesData, growthData, _ */
 (function() {
   Polymer({
     is: 'arrival-milestones',
+    behaviors: [GlobalsBehaviour],  // jshint ignore:line
 
     properties: {
+      ageInDays: {
+        type: String,
+        value: NaN,
+        notify: true
+      },
+      now: {
+        type: String,
+        value: (new Date()).toISOString(),
+        notify: true
+      },
+      percentiles: {
+        type: Object,
+        value: {}
+      },
+      milestones: {
+        type: Object,
+        value: {},
+        notify: true
+      },
+      selectOptions: {
+        type: Object,
+        value: {},
+        notify: true
+      },
+      birthYear: {
+        type: String,
+        notify: true
+      },
+      birthMonth: {
+        type: String,
+        notify: true
+      },
+      birthDay: {
+        type: String,
+        notify: true
+      },
+      genderName: '',
+      pronoun: 'it',
+      pronounObj: 'it',
+      pronounPos: 'its',
+      pronounRef: 'itself'
     },
 
     ready: function() {
@@ -56,24 +654,11 @@
       });
     },
 
-    updateTime: function() {
-
-    },
-
-    sufficientData: function() {
-
-    },
-
-    toggleBabyProperties: function() {
-
-    },
-
     /*
      * Checks if storage needs to be re-initialized
      * useful when structure or default data has changed
      */
     versionCheck: function() {
-      console.log('checking...');
       var version = this.milestones.version || '0.0.0';
       if (app.updateRequired('milestones', version)) {
         this.initializeMilestones(true);
@@ -81,11 +666,6 @@
       }
     },
 
-    /*
-     * Initialize milestone object with default milestone data,
-     * then call this.setMilestones() to file milestones into
-     * correct categories
-     */
     initializeMilestones: function(reload) {
       this.milestones = {
         version: '1.1.0',
@@ -94,14 +674,86 @@
         coming: milestonesData,
         reached: []
       };
-//      console.log(this.milestones);
+      console.log(this.milestones);
       this.setMilestones();
       if (reload) { location.reload(); }
     },
 
-    /*
-     * Set percentiles object for current gender/age
-     */
+    toggleBabyProperties: function() {
+      this.$.babyProperties.toggle();
+    },
+
+    updateTime: function() {
+      this.now = (new Date()).toISOString();
+      this.async(this.updateTime, 60000);
+      // console.log(this.now);
+    },
+
+
+    // Listeners
+
+    listeners: {
+      'milestonesStorage.iron-localstorage-load' : 'milestonesLoaded'
+    },
+
+    milestonesLoaded: function() {
+//      console.log('milestones localstorage loaded...');
+      this.setMilestones();
+    },
+
+
+    // Observers
+
+    observers: [
+        'setBirthDate(birthYear, birthMonth, birthDay)',
+        'setAgeInDays(globals.birthdate, now)',
+        'setPercentiles(globals.gender, ageInDays)',
+        'setGender(globals.gender)',
+    ],
+
+    // Set globals.birthdate when birthYear, birthMonth and birthDay are set
+    setBirthDate: function(birthYear, birthMonth, birthDay) {
+      var birthdate = birthYear+'-'+birthMonth+'-'+birthDay;
+      // console.log('attempting to set', birthdate);
+      // assume format yyyy-MM-dd
+      // if one of the elements is blank length < 10
+      if (birthdate.length === 10) {
+        if ((this.globals.birthdate === '') || (!this.datesEqual(this.globals.birthdate, birthdate))) {
+          console.log('setting birthdate '+this.parseDate(birthdate));
+          this.set('globals.birthdate', this.parseDate(birthdate));
+        }
+      }
+    },
+
+    parseDate: function(s) {
+      // console.log('parsing date', s);
+      var datetime = new Date(s);
+      if (!isNaN(datetime.getDate())) { return datetime; }
+
+      // if date doesn't parse assume custom format: yyyy-MM-dd HH:mm:ss
+      datetime = s.split(' ');
+      var date = datetime[0].split('-');
+      var time = ['00', '00', '00'];
+      if (datetime.length > 1) {
+        time = datetime[1].split(':');
+      }
+      var yyyy = parseInt(date[0]);
+      var MM = parseInt(date[1])+1; // zero indexed
+      var dd = parseInt(date[2]);
+      var HH = parseInt(time[0]);
+      var mm = parseInt(time[1]);
+      var ss = parseInt(time[2]);
+      // console.log(yyyy, MM, dd, HH, mm, ss);
+      datetime = new Date(yyyy, MM, dd, HH, mm, ss);
+      // console.log(datetime);
+      return datetime;
+    },
+
+    setAgeInDays: function(birthdate, now) {
+      // assume now has proper date format
+      this.ageInDays = ((new Date(now) - this.parseDate(birthdate))/1000/60/60/24);
+    },
+
     setPercentiles: function(gender, ageInDays) {
       // female, also used if gender not set
       gender = gender || 'female';
@@ -118,12 +770,32 @@
           'P90': growthData.get('weight', ageInDays, gender, 'P90'),
         }
       };
+//      console.log(month, ageInDays, gender, this.percentiles.height.P50, this.percentiles.weight.P50);
+
+      // recalculate milestones, if initialized
+      if (this.milestones.hasOwnProperty('due')) {
+        this.setMilestones();
+      }
+    },
+
+    // Overrides this.milestones using Polymer's array methods
+    updateMilestones: function(m) {
+      for (var category in this.milestones) {
+        // version property is not a category
+        if (category !== 'version') {
+          this.splice('milestones.'+category, 0, this.milestones[category].length);
+
+          // Polymer has no .concat()
+          for (var i=0; i < m[category].length; i++) {
+            this.push('milestones.'+category, m[category][i]);
+          }
+        }
+      }
+      this.$.milestonesStorage.save();
 
     },
 
-    /*
-     * Place milestones into correct categories
-     */
+    // Update milestones
     setMilestones: function() {
       // empty dict to file milestones in
       var m = {
@@ -140,18 +812,18 @@
           flat = flat.concat(this.milestones[category]);
         }
       }
-      console.log('>>> setMilestones');
+      // console.log('>>> setMilestones');
       this.categorizeMilestone(flat, m);
       this.updateMilestones(m);
-      console.log('<<<');
+      // console.log('<<<');
     },
 
     /*
-     * Place given milestone into correct category
-     * called by setMilestones()
+     * Place given milestone into correct caegory
+     * called by setMilesteones()
      */
     categorizeMilestone: function(milestonesFlat, milestones) {
-      console.log('=== before categorizeMilestone\n', milestonesFlat, milestones);
+      // console.log('=== before categorizeMilestone\n', milestonesFlat, milestones);
       var self = this;
 
       milestones.reached = milestones.reached.concat(
@@ -178,29 +850,303 @@
       milestones.overdue = _.sortByAll(milestones.overdue, ['late', 'early', 'title']);
       milestones.due = _.sortByAll(milestones.due, ['late', 'early', 'title']);
 
-      console.log('=== after\n', milestonesFlat, milestones);
+      // console.log('=== after\n', milestonesFlat, milestones);
     },
 
-    /*
-     * Overrides this.milestones using Polymer's array methods
-     */
-    updateMilestones: function(m) {
-      for (var category in this.milestones) {
-        // version property is not a category
-        if (category !== 'version') {
-          console.log('---', category);
-          this.splice('milestones.'+category, 0, this.milestones[category].length);
+    setGender: function(gender) {
+      if (gender === 'female') {
+        this.genderName = 'girl';
+        this.pronoun = 'she';
+        this.pronounObj = 'her';
+        this.pronounPos = 'her';
+        this.pronounRef = 'herself';
+      } else if (gender === 'male') {
+        this.genderName = 'boy';
+        this.pronoun = 'he';
+        this.pronounObj = 'him';
+        this.pronounPos = 'his';
+        this.pronounRef = 'himself';
+      } else {
+        this.genderName = '';
+        this.pronoun = 'it';
+        this.pronounObj = 'it';
+        this.pronounPos = 'its';
+        this.pronounRef = 'itself';
+      }
+    },
 
-          // Polymer has no .concat()
-          for (var i=0; i < m[category].length; i++) {
-            this.push('milestones.'+category, m[category][i]);
+    // --- Helpers
+
+    // Convert float to fixed
+    // TODO: Age in days should only count full days
+    toFixed: function(x, decimals) {
+      // assert typeof x === 'float'
+      return x.toFixed(decimals);
+    },
+
+    // Calculate integer value between two dates in days
+    daysUntil: function(a) {
+      return (a-this.ageInDays).toFixed(0);
+    },
+
+    // Calculate absolute integer value between two dates in days
+    daysUntilString: function(a) {
+      var s = Math.abs(a-this.ageInDays).toFixed(0);
+      if (s > 1) {
+        s += ' days';
+      } else {
+        s += ' day';
+      }
+      return s;
+    },
+
+    // 0-pad to 2 digits (e.g. for dates)
+    zeroPad: function(s) {
+      s = parseInt(s);
+      s = s < 10 ? '0'+s : s.toString();
+      return s;
+    },
+
+    // Compare two dates
+    datesEqual: function(a, b) {
+      return this.parseDate(a).toISOString() === this.parseDate(b).toISOString();
+    },
+
+    // Return ISO format date string of local date
+    formatDate: function(s) {
+      var year = new Date(s).getFullYear();
+      var month = this.zeroPad(new Date(s).getMonth()+1);
+      var day = this.zeroPad(new Date(s).getDate());
+      return year+'-'+month+'-'+day;
+    },
+
+    // Return ISO format date and locale format time string of local date
+    formatDatetime: function(s) {
+      // strip away timezone part
+      var time = new Date(s).toLocaleTimeString().split(' ')[0];
+      return this.formatDate(s)+ ' ' + time;
+    },
+
+    // Determine whether to show baby properties input
+    sufficientData: function() {
+      if (typeof(this.globals.gender) === 'undefined') { return false; }
+      if (typeof(this.globals.birthdate) === 'undefined') { return false; }
+      if (this.globals.gender.length === 0) { return false; }
+      if (this.globals.birthdate.length === 0) { return false; }
+      // console.log(this.globals.gender, this.globals.birthdate);
+      return true;
+    },
+
+    // Return whether to switch to show some items based on passed state
+    showSome: function(state) {
+//      console.log(state, state < 1);
+      return state<2;
+    },
+
+    // Return whether formulas can calculate accurate height/weight
+    coveredByFormulas: function(gender, ageInDays) {
+      if (typeof(gender) === 'undefined') { return false; }
+      if (gender === '') { return false; }
+      if (ageInDays < 0) { return false; }
+      if (ageInDays > this.formulaValidity) { return false; }
+      return true;
+    },
+
+    disableButton: function(button) {
+      button.addClass('disabled');
+    },
+
+    enableButton: function(button) {
+      button.removeClass('disabled');
+    },
+
+    decreaseState: function(category) {
+      this.set('globals.state.'+category, this.globals.state[category]-1);
+    },
+
+    increaseState: function(category) {
+      this.set('globals.state.'+category, this.globals.state[category]+1);
+    },
+
+    setState: function(category, state) {
+      var i = this.globals.stateEnum.indexOf(state);
+//      console.log('setting', 'globals.state.'+category, i);
+      this.set('globals.state.'+category, i);
+    },
+
+    // Triggered by arrival-category-header toggle
+    toggleCategory: function(e) {
+      var button = e.target;
+      // handle click on span not bubbling to button
+      while (button.getAttribute('action') === null) {
+        button = button.parentElement;
+      }
+      var category = button.getAttribute('category');
+      // vulcanize will add 'element-name/' as prefix! :/
+      var action = _.last(button.getAttribute('action').split('/'));
+      var targetCollapsible = 'collapsible-'+category;  // collapsible-category
+      var state = this.globals.stateEnum[parseInt(this.globals.state[category])];
+
+//      console.log(category, action);
+      if (action === 'toggle') {
+        // toggle indiscriminately
+        // console.log('... toggling', targetCollapsible);
+        this.$[targetCollapsible].toggle();
+//        console.log(this.milestones[category].length, _.map(this.milestones[category], 'title'));
+
+      } else if (action === 'contract') {
+        if (!this.$[targetCollapsible].opened) {
+          // already fully collapsed
+          app.toastAlreadyFullyCollapsed();
+
+        } else if (category === 'due') {
+          // due category does not have 'show_some' state
+          this.setState(category, 'hide');
+          this.$[targetCollapsible].toggle();
+
+
+        // list open, check current state to determine action
+        } else if (state === 'show_some') {
+          // switch to hide, i.e. collapse
+          this.decreaseState(category);
+          this.$[targetCollapsible].toggle();
+
+        } else if (state === 'show_all') {
+          // switch to show_some
+          this.decreaseState(category);
+
+        } else {
+          // already hidden, but maybe toggled open
+          if (this.$[targetCollapsible].opened) {
+            this.$[targetCollapsible].toggle();
+          }
+        }
+//        console.log(this.globals.state[category], this.globals.stateEnum[parseInt(this.globals.state[category])]);
+
+      } else if (action === 'expand') {
+
+        if (!this.$[targetCollapsible].opened) {
+          // open collapsed list into state show_some
+          this.setState(category, 'show_some');
+          this.$[targetCollapsible].toggle();
+
+          if (category === 'due') {
+            // due category does not have 'show_some' state
+            this.setState(category, 'show_all');
+          }
+
+        } else if (state === 'show_all') {
+          app.toastAlreadyFullyExpanded();
+
+        } else {
+          // list already open, bump to show_all if needed
+          this.setState(category, 'show_all');
+        }
+//        console.log(this.globals.state[category], this.globals.stateEnum[parseInt(this.globals.state[category])]);
+
+      } else if (action === 'more') {
+        // handling "more" button click
+        this.setState(category, 'show_all');
+
+      } else if (action === 'less') {
+        // handling "less" button click
+        this.setState(category, 'show_some');
+
+      }
+    },
+
+
+    /*
+     * Triggered when milestone clicked
+     * Show milestone description, prompt whether to add to 'reached'
+     */
+    toggleReached: function(e) {
+      var milestone = e.model.item;
+      var defaultDate = milestone.dateReached;
+      if (milestone.dateReached === '') {
+        defaultDate = new Date();
+      }
+
+      // TODO: implement this to get rid of using prompt
+//      var s = app.dialogShow(milestone.title, milestone.description);
+
+      var reachedInfo = '';
+      if (milestone.dateReached !== '') {
+        reachedInfo = '(leave blank to remove from "Milestones reached")';
+      }
+      var s = window.prompt(
+          '"' + milestone.title +'"\n\n'+ milestone.description +
+          '\n\n' + 'Milestone achieved on ' + reachedInfo,
+          this.formatDatetime(this.parseDate(defaultDate))
+      );
+
+      if (s !== null) {
+        if (s === '') {
+          // remove from dateReached if set
+          if (milestone.dateReached !== '') {
+
+            // workaround for Safari returning '' instead of null when clicking Cancel
+            var isSafari = (navigator.userAgent.search('Safari') >= 0 && navigator.userAgent.search('Chrome') < 0);
+            var isSafariAndRemove = false;
+            if (isSafari) {
+              console.log('Safari prompt Cancel workaround');
+              isSafariAndRemove = window.confirm(
+                  'Remove "'+milestone.title+'" from "Milestones reached"'
+              );
+            }
+
+            if (!isSafari || isSafariAndRemove) {
+              milestone.dateReached = '';
+              this.setMilestones();
+              app.toastMilestoneRemovedFromReached();
+            }
+
+//          } else {
+//            console.log('Milestone not in reached, nothing to do.');
+          }
+
+        } else {
+          // add to 'reached' if date string validates
+          var dateEntered = this.parseDate(s);
+          if (isNaN(dateEntered.getDate())) {
+            window.alert('Sorry, the date you entered cannot be processed:\n\n'+s);
+          } else {
+            // set milestone reached if currently not set, of if set and not equal
+            if ((milestone.dateReached === '') || (!this.datesEqual(milestone.dateReached, dateEntered))) {
+              milestone.dateReached = (new Date(dateEntered)).toISOString();
+              this.setMilestones();
+              app.toastMilestoneAddedToReached();
+            } else {
+              console.log('Date unchanged');
+            }
           }
         }
       }
-//      this.$.milestonesStorage.save();
-
     },
 
+    // Show milestones that ended within the last n days
+    wasRecently: function(milestone) {
+      var n = month;
+//      console.log(milestone.title, milestone.late, milestone.late<=this.ageInDays+n);
+      return milestone.late >= this.ageInDays - n;
+    },
+    wasNotRecently: function(milestone) {
+      var n = month;
+//      console.log(milestone.title, milestone.late, milestone.late<=this.ageInDays+n);
+      return milestone.late < this.ageInDays - n;
+    },
+
+    // Show milestones that within the next n days
+    isSoon: function(milestone) {
+      var n = 2 * month;
+//      console.log(milestone.title, milestone.early, milestone.early<=this.ageInDays+n);
+      return milestone.early <= this.ageInDays + n;
+    },
+    isNotSoon: function(milestone) {
+      var n = 2 * month;
+//      console.log(milestone.title, milestone.early, milestone.early<=this.ageInDays+n);
+      return milestone.early > this.ageInDays + n;
+    },
 
   });
 })();

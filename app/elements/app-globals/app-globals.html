@@ -1,0 +1,103 @@
+<link rel="import" href="globals-behavior.html">
+
+<dom-module id="app-globals">
+  <template>
+    <iron-localstorage name="arrival-globals"
+      value="{{globals}}"
+      on-iron-localstorage-load="versionCheck"
+      on-iron-localstorage-load-empty="initializeGlobals"
+    ></iron-localstorage>
+    <iron-localstorage id="storebabyname" name="arrival-babyname"
+      value="{{globals.babyname}}"
+    ></iron-localstorage>
+    <iron-localstorage name="arrival-gender"
+      value="{{globals.gender}}"
+    ></iron-localstorage>
+    <iron-localstorage name="arrival-birthdate"
+      value="{{globals.birthdate}}"
+    ></iron-localstorage>
+
+    <iron-localstorage name="arrival-state-reached"
+      value="{{globals.state.reached}}"
+      type="number"
+    ></iron-localstorage>
+    <iron-localstorage name="arrival-state-overdue"
+      value="{{globals.state.overdue}}"
+      type="number"
+    ></iron-localstorage>
+    <iron-localstorage name="arrival-state-due"
+      value="{{globals.state.due}}"
+      type="number"
+    ></iron-localstorage>
+    <iron-localstorage name="arrival-state-coming"
+      value="{{globals.state.coming}}"
+      type="number"
+    ></iron-localstorage>
+  </template>
+</dom-module>
+
+<script>
+(function() {
+  Polymer({
+    is: 'app-globals',
+    behaviors: [GlobalsBehaviour],  // jshint ignore:line
+
+    properties: {
+      // transient data
+
+      // persistent data
+
+      globals: {
+        type: Object,
+        notify:true
+      },
+
+    },
+
+    ready: function() {
+    },
+
+    /*
+     * Checks if storage needs to be re-initialized
+     * useful when structure or default data has changed
+     */
+    versionCheck: function() {
+      var version = this.globals.version || '0.0.0';
+      if (app.updateRequired('globals', version)) {
+        this.initializeGlobals(
+            this.globals.babyname,
+            this.globals.gender,
+            this.globals.birthdate,
+            true
+        );
+        window.alert('Data structure out of date. Baby data will reset.');
+      }
+    },
+
+    /*
+     * Initializes globals structure
+     * might get values from versionCheck() for initialization
+     */
+    initializeGlobals: function(babyname, gender, birthdate, reload) {
+      babyname = babyname || '';
+      gender = gender || '';
+      birthdate = birthdate || '';
+      this.globals = {
+        babyname: babyname,
+        gender: gender,
+        stateEnum: ['hide', 'show_some', 'show_all'],
+        state: {
+          reached: 2,
+          overdue: 2,
+          due: 2,
+          coming: 2,
+        },
+        birthdate: birthdate,//new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate(),
+        version: '1.0.0'
+      };
+      if (reload) { location.reload(); }
+    },
+
+  });
+})();
+</script>

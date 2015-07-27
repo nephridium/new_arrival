@@ -165,62 +165,68 @@
         Age: <span>{{toFixed(ageInDays, 2)}}</span> days
       </div>
 
-      <div class="info">
-        <div class="settings-item" hidden="{{!globals.babyname}}">
-          <div class="settings-box-label">
-            Baby &nbsp;<span hidden="{{!globals.gender}}">{{genderName}}</span>
-          </div>
-          <div class="flex"></div>
-          <div>
-            <span>{{globals.babyname}}</span>&nbsp;
-          </div>
-        </div>
 
-        <div hidden="{{!globals.birthdate}}">
-          <div class="settings-item">
+      <!-- Collapse data section if no borth date entered yet -->
+      <iron-collapse opened="{{globals.birthdate}}">
+
+        <div class="info">
+          <div class="settings-item" hidden="{{!globals.babyname}}">
             <div class="settings-box-label">
-              Born on
+              Baby &nbsp;<span hidden="{{!globals.gender}}">{{genderName}}</span>
             </div>
             <div class="flex"></div>
             <div>
-              <span>{{formatDate(globals.birthdate)}}</span>
+              <span>{{globals.babyname}}</span>&nbsp;
             </div>
           </div>
 
-          <div class="settings-item">
-            <div class="settings-box-label">
-              Age
-            </div>
-            <div class="flex"></div>
-            <div>
-              <span>{{toFixed(ageInDays, 0)}}</span> days
-            </div>
-          </div>
-
-          <div hidden="{{!coveredByFormulas(globals.gender, ageInDays)}}">
+          <div hidden="{{!globals.birthdate}}">
             <div class="settings-item">
               <div class="settings-box-label">
-                Median height at this age
+                Born on
               </div>
               <div class="flex"></div>
               <div>
-                <span>{{toFixed(percentiles.height.P50, 1)}}</span> cm
+                <span>{{formatDate(globals.birthdate)}}</span>
               </div>
             </div>
 
             <div class="settings-item">
               <div class="settings-box-label">
-                Median weight at this age
+                Age
               </div>
               <div class="flex"></div>
               <div>
-                <span>{{toFixed(percentiles.weight.P50, 1)}}</span> kg
+                <span>{{toFixed(ageInDays, 0)}}</span> days
+              </div>
+            </div>
+
+            <div hidden="{{!coveredByFormulas(globals.gender, ageInDays)}}">
+              <div class="settings-item">
+                <div class="settings-box-label">
+                  Median height at this age
+                </div>
+                <div class="flex"></div>
+                <div>
+                  <span>{{toFixed(percentiles.height.P50, 1)}}</span> cm
+                </div>
+              </div>
+
+              <div class="settings-item">
+                <div class="settings-box-label">
+                  Median weight at this age
+                </div>
+                <div class="flex"></div>
+                <div>
+                  <span>{{toFixed(percentiles.weight.P50, 1)}}</span> kg
+                </div>
               </div>
             </div>
           </div>
+
         </div>
 
-      </div>
+      </iron-collapse>
 
     <!-- Reset Milestones button --
     <paper-button
@@ -235,30 +241,59 @@
     </iron-collapse>
 
 
-    <!-------------------------------------------- REACHED -->
-    <div>
-      <arrival-category-header
-          id="header-reached"
-          class="inline"
-          title="Milestones reached"
-          category="reached"
-          on-click="toggleCategory"
-          >
-      </arrival-category-header>
+    <!-- Collapse milestones section if no borth date entered yet -->
+    <iron-collapse opened="{{globals.birthdate}}">
 
-      <iron-collapse id="collapsible-reached">
 
-        <!-- Empty indicator -->
-        <template is="dom-if" if="{{!milestones.reached.length}}">
-          <paper-button class="section-empty" noink>
-            None yet
-          </paper-button>
-        </template>
+      <!-------------------------------------------- REACHED -->
+      <div>
+        <arrival-category-header
+            id="header-reached"
+            class="inline"
+            title="Milestones reached"
+            category="reached"
+            on-click="toggleCategory"
+            >
+        </arrival-category-header>
 
-        <!-- Rest of list -->
-        <iron-collapse opened="{{!showSome(globals.state.reached)}}">
+        <iron-collapse id="collapsible-reached">
+
+          <!-- Empty indicator -->
+          <template is="dom-if" if="{{!milestones.reached.length}}">
+            <paper-button class="section-empty" noink>
+              None yet
+            </paper-button>
+          </template>
+
+          <!-- Rest of list -->
+          <iron-collapse opened="{{!showSome(globals.state.reached)}}">
+            <template is="dom-repeat" items="{{milestones.reached}}"
+                filter="wasNotRecently" observe="late">
+              <div>
+
+                <paper-button
+                    class="milestone-reached"
+                    on-click="toggleReached"
+                    title="{{item.description}}"
+                    raised
+                    noink
+                >
+                  <span>{{item.title}}</span>
+                  <br/>
+                  <span class="milestone-info">
+                    achieved on <span>{{formatDate(item.dateReached)}}</span>
+                  </span>
+                  <span class="debug">{{toFixed(item.early, 1)}}</span>
+                  <span class="debug">{{toFixed(item.late, 1)}}</span>
+                </paper-button>
+
+              </div>
+            </template>
+          </iron-collapse>
+
+          <!-- Soon list -->
           <template is="dom-repeat" items="{{milestones.reached}}"
-              filter="wasNotRecently" observe="late">
+              filter="wasRecently" observe="late">
             <div>
 
               <paper-button
@@ -279,84 +314,84 @@
 
             </div>
           </template>
-        </iron-collapse>
 
-        <!-- Soon list -->
-        <template is="dom-repeat" items="{{milestones.reached}}"
-            filter="wasRecently" observe="late">
-          <div>
-
-            <paper-button
-                class="milestone-reached"
-                on-click="toggleReached"
-                title="{{item.description}}"
-                raised
-                noink
-            >
-              <span>{{item.title}}</span>
-              <br/>
-              <span class="milestone-info">
-                achieved on <span>{{formatDate(item.dateReached)}}</span>
-              </span>
-              <span class="debug">{{toFixed(item.early, 1)}}</span>
-              <span class="debug">{{toFixed(item.late, 1)}}</span>
-            </paper-button>
-
-          </div>
-        </template>
-
-        <!-- More button -->
-        <template is="dom-if" if="{{milestones.reached.length}}">
-          <paper-button class="section-empty" noink
-                        on-click="toggleCategory"
-                        category="reached"
-                        action="more"
-              hidden$="{{!showSome(globals.state.reached)}}">
-            More
-          </paper-button>
-        </template>
-
-
-        <!-- Rest of list -->
-        <div hidden$="{{showSome(globals.state.reached)}}">
-          <!-- Less button -->
+          <!-- More button -->
           <template is="dom-if" if="{{milestones.reached.length}}">
             <paper-button class="section-empty" noink
                           on-click="toggleCategory"
                           category="reached"
-                          action="less"
-                >
-              Less
+                          action="more"
+                hidden$="{{!showSome(globals.state.reached)}}">
+              More
             </paper-button>
           </template>
-        </div>
 
-      </iron-collapse>
-    </div>
 
-    <!-------------------------------------------- OVERDUE -->
-    <div>
-      <arrival-category-header
-          class="inline"
-          title="Milestones overdue"
-          category="overdue"
-          on-click="toggleCategory"
-          >
-      </arrival-category-header>
+          <!-- Rest of list -->
+          <div hidden$="{{showSome(globals.state.reached)}}">
+            <!-- Less button -->
+            <template is="dom-if" if="{{milestones.reached.length}}">
+              <paper-button class="section-empty" noink
+                            on-click="toggleCategory"
+                            category="reached"
+                            action="less"
+                  >
+                Less
+              </paper-button>
+            </template>
+          </div>
 
-      <iron-collapse id="collapsible-overdue" opened>
+        </iron-collapse>
+      </div>
 
-        <!-- Empty indicator -->
-        <template is="dom-if" if="{{!milestones.overdue.length}}">
-          <paper-button class="section-empty" noink>
-            None
-          </paper-button>
-        </template>
+      <!-------------------------------------------- OVERDUE -->
+      <div>
+        <arrival-category-header
+            class="inline"
+            title="Milestones overdue"
+            category="overdue"
+            on-click="toggleCategory"
+            >
+        </arrival-category-header>
 
-        <!-- Rest of list -->
-        <iron-collapse opened="{{!showSome(globals.state.overdue)}}">
+        <iron-collapse id="collapsible-overdue" opened>
+
+          <!-- Empty indicator -->
+          <template is="dom-if" if="{{!milestones.overdue.length}}">
+            <paper-button class="section-empty" noink>
+              None
+            </paper-button>
+          </template>
+
+          <!-- Rest of list -->
+          <iron-collapse opened="{{!showSome(globals.state.overdue)}}">
+            <template is="dom-repeat" items="{{milestones.overdue}}"
+                filter="wasNotRecently" observe="late">
+              <div>
+
+                <paper-button
+                    class="milestone-overdue"
+                    on-click="toggleReached"
+                    title="{{item.description}}"
+                    raised
+                    noink
+                >
+                  <span>{{item.title}}</span>
+                  <br/>
+                  <span class="milestone-info">
+                    about <span>{{daysUntilString(item.late)}}</span> overdue
+                  </span>
+                  <span class="debug">{{toFixed(item.early, 1)}}</span>
+                  <span class="debug">{{toFixed(item.late, 1)}}</span>
+                </paper-button>
+
+              </div>
+            </template>
+          </iron-collapse>
+
+          <!-- Soon list -->
           <template is="dom-repeat" items="{{milestones.overdue}}"
-              filter="wasNotRecently" observe="late">
+              filter="wasRecently" observe="late">
             <div>
 
               <paper-button
@@ -377,164 +412,100 @@
 
             </div>
           </template>
-        </iron-collapse>
 
-        <!-- Soon list -->
-        <template is="dom-repeat" items="{{milestones.overdue}}"
-            filter="wasRecently" observe="late">
-          <div>
-
-            <paper-button
-                class="milestone-overdue"
-                on-click="toggleReached"
-                title="{{item.description}}"
-                raised
-                noink
-            >
-              <span>{{item.title}}</span>
-              <br/>
-              <span class="milestone-info">
-                about <span>{{daysUntilString(item.late)}}</span> overdue
-              </span>
-              <span class="debug">{{toFixed(item.early, 1)}}</span>
-              <span class="debug">{{toFixed(item.late, 1)}}</span>
-            </paper-button>
-
-          </div>
-        </template>
-
-        <!-- More button -->
-        <template is="dom-if" if="{{milestones.overdue.length}}">
-          <paper-button class="section-empty" noink
-                        on-click="toggleCategory"
-                        category="overdue"
-                        action="more"
-              hidden$="{{!showSome(globals.state.overdue)}}">
-            More
-          </paper-button>
-        </template>
-
-
-        <!-- Rest of list -->
-        <div hidden$="{{showSome(globals.state.overdue)}}">
-          <!-- Less button -->
+          <!-- More button -->
           <template is="dom-if" if="{{milestones.overdue.length}}">
             <paper-button class="section-empty" noink
                           on-click="toggleCategory"
                           category="overdue"
-                          action="less"
-                >
-              Less
+                          action="more"
+                hidden$="{{!showSome(globals.state.overdue)}}">
+              More
             </paper-button>
           </template>
-        </div>
 
-      </iron-collapse>
-    </div>
 
-    <!-------------------------------------------- DUE -->
-    <div>
-      <arrival-category-header
-          class="inline"
-          title="Milestones due"
-          category="due"
-          on-click="toggleCategory"
-          >
-      </arrival-category-header>
-
-      <iron-collapse id="collapsible-due" opened>
-
-        <template is="dom-if" if="{{!milestones.due.length}}">
-          <paper-button class="section-empty" noink>
-            Currently none
-          </paper-button>
-        </template>
-
-        <template is="dom-repeat" items="{{milestones.due}}">
-          <div>
-
-            <paper-button
-                class="milestone-due"
-                on-click="toggleReached"
-                title="{{item.description}}"
-                raised
-                noink
-            >
-              <span>{{item.title}}</span>
-              <br/>
-              <span class="milestone-info">
-                about <span>{{daysUntilString(item.late)}}</span> remaining
-              </span>
-              <span class="debug">{{toFixed(item.early, 1)}}</span>
-              <span class="debug">{{toFixed(item.late, 1)}}</span>
-            </paper-button>
-
+          <!-- Rest of list -->
+          <div hidden$="{{showSome(globals.state.overdue)}}">
+            <!-- Less button -->
+            <template is="dom-if" if="{{milestones.overdue.length}}">
+              <paper-button class="section-empty" noink
+                            on-click="toggleCategory"
+                            category="overdue"
+                            action="less"
+                  >
+                Less
+              </paper-button>
+            </template>
           </div>
-        </template>
-      </iron-collapse>
-    </div>
 
-    <!-------------------------------------------- COMING UP -->
-    <div>
-      <arrival-category-header
-          class="inline"
-          title="Milestones coming up"
-          category="coming"
-          on-click="toggleCategory"
-          >
-      </arrival-category-header>
+        </iron-collapse>
+      </div>
 
-      <iron-collapse id="collapsible-coming" opened>
-
-        <!-- Empty indicator -->
-        <template is="dom-if" if="{{!milestones.coming.length}}">
-          <paper-button class="section-empty" noink>
-            Currently none
-          </paper-button>
-        </template>
-
-        <!-- Soon list -->
-        <template is="dom-repeat" items="{{milestones.coming}}"
-            filter="isSoon" observe="early">
-          <div>
-
-            <paper-button
-                class="milestone-coming"
-                on-click="toggleReached"
-                title="{{item.description}}"
-                raised
-                noink
+      <!-------------------------------------------- DUE -->
+      <div>
+        <arrival-category-header
+            class="inline"
+            title="Milestones due"
+            category="due"
+            on-click="toggleCategory"
             >
-              <span>{{item.title}}</span>
-              <br/>
-              <span class="milestone-info">
-                <span>{{daysUntil(item.early)}}</span>
-                to
-                <span>{{daysUntil(item.late)}}</span> days from now
-              </span>
-              <span class="debug">{{toFixed(item.early, 1)}}</span>
-              <span class="debug">{{toFixed(item.late, 1)}}</span>
+        </arrival-category-header>
+
+        <iron-collapse id="collapsible-due" opened>
+
+          <template is="dom-if" if="{{!milestones.due.length}}">
+            <paper-button class="section-empty" noink>
+              Currently none
             </paper-button>
+          </template>
 
-          </div>
-        </template>
+          <template is="dom-repeat" items="{{milestones.due}}">
+            <div>
 
-        <!-- More button -->
-        <template is="dom-if" if="{{milestones.coming.length}}">
-          <paper-button class="section-empty" noink
-                        on-click="toggleCategory"
-                        category="coming"
-                        action="more"
-              hidden$="{{!showSome(globals.state.coming)}}">
-            More
-          </paper-button>
-        </template>
+              <paper-button
+                  class="milestone-due"
+                  on-click="toggleReached"
+                  title="{{item.description}}"
+                  raised
+                  noink
+              >
+                <span>{{item.title}}</span>
+                <br/>
+                <span class="milestone-info">
+                  about <span>{{daysUntilString(item.late)}}</span> remaining
+                </span>
+                <span class="debug">{{toFixed(item.early, 1)}}</span>
+                <span class="debug">{{toFixed(item.late, 1)}}</span>
+              </paper-button>
 
+            </div>
+          </template>
+        </iron-collapse>
+      </div>
 
-        <!-- Rest of list -->
-        <iron-collapse opened="{{!showSome(globals.state.coming)}}">
+      <!-------------------------------------------- COMING UP -->
+      <div>
+        <arrival-category-header
+            class="inline"
+            title="Milestones coming up"
+            category="coming"
+            on-click="toggleCategory"
+            >
+        </arrival-category-header>
+
+        <iron-collapse id="collapsible-coming" opened>
+
+          <!-- Empty indicator -->
+          <template is="dom-if" if="{{!milestones.coming.length}}">
+            <paper-button class="section-empty" noink>
+              Currently none
+            </paper-button>
+          </template>
+
+          <!-- Soon list -->
           <template is="dom-repeat" items="{{milestones.coming}}"
-              filter="isNotSoon" observe="early">
+              filter="isSoon" observe="early">
             <div>
 
               <paper-button
@@ -558,20 +529,61 @@
             </div>
           </template>
 
-          <!-- Less button -->
+          <!-- More button -->
           <template is="dom-if" if="{{milestones.coming.length}}">
             <paper-button class="section-empty" noink
                           on-click="toggleCategory"
                           category="coming"
-                          action="less"
-                >
-              Less
+                          action="more"
+                hidden$="{{!showSome(globals.state.coming)}}">
+              More
             </paper-button>
           </template>
 
+
+          <!-- Rest of list -->
+          <iron-collapse opened="{{!showSome(globals.state.coming)}}">
+            <template is="dom-repeat" items="{{milestones.coming}}"
+                filter="isNotSoon" observe="early">
+              <div>
+
+                <paper-button
+                    class="milestone-coming"
+                    on-click="toggleReached"
+                    title="{{item.description}}"
+                    raised
+                    noink
+                >
+                  <span>{{item.title}}</span>
+                  <br/>
+                  <span class="milestone-info">
+                    <span>{{daysUntil(item.early)}}</span>
+                    to
+                    <span>{{daysUntil(item.late)}}</span> days from now
+                  </span>
+                  <span class="debug">{{toFixed(item.early, 1)}}</span>
+                  <span class="debug">{{toFixed(item.late, 1)}}</span>
+                </paper-button>
+
+              </div>
+            </template>
+
+            <!-- Less button -->
+            <template is="dom-if" if="{{milestones.coming.length}}">
+              <paper-button class="section-empty" noink
+                            on-click="toggleCategory"
+                            category="coming"
+                            action="less"
+                  >
+                Less
+              </paper-button>
+            </template>
+
+          </iron-collapse>
         </iron-collapse>
-      </iron-collapse>
-    </div>
+      </div>
+
+    </iron-collapse>
 
   </template>
 </dom-module>
@@ -929,6 +941,7 @@
 
     // Determine whether to show baby properties input
     sufficientData: function() {
+      if (typeof(this.globals) === 'undefined') { return false; }
       if (typeof(this.globals.gender) === 'undefined') { return false; }
       if (typeof(this.globals.birthdate) === 'undefined') { return false; }
       if (this.globals.gender.length === 0) { return false; }

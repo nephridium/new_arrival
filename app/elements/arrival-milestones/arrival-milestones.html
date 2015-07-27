@@ -39,6 +39,9 @@
       font-size: smaller;
       text-transform: none;
     }
+    .milestone-more {
+      box-shadow: inset 0 0 1000px rgba(80, 0, 0, .1);
+    }
 
     .settings-item {
       @apply(--layout-horizontal);
@@ -166,7 +169,7 @@
       </div>
 
 
-      <!-- Collapse data section if no borth date entered yet -->
+      <!-- Collapse data section if no birth date entered yet -->
       <iron-collapse opened="{{globals.birthdate}}">
 
         <div class="info">
@@ -241,7 +244,7 @@
     </iron-collapse>
 
 
-    <!-- Collapse milestones section if no borth date entered yet -->
+    <!-- Collapse milestones section if no birth date entered yet -->
     <iron-collapse opened="{{globals.birthdate}}">
 
 
@@ -272,7 +275,7 @@
               <div>
 
                 <paper-button
-                    class="milestone-reached"
+                    class="milestone-reached milestone-more"
                     on-click="toggleReached"
                     title="{{item.description}}"
                     raised
@@ -370,7 +373,7 @@
               <div>
 
                 <paper-button
-                    class="milestone-overdue"
+                    class="milestone-overdue milestone-more"
                     on-click="toggleReached"
                     title="{{item.description}}"
                     raised
@@ -548,7 +551,7 @@
               <div>
 
                 <paper-button
-                    class="milestone-coming"
+                    class="milestone-coming milestone-more"
                     on-click="toggleReached"
                     title="{{item.description}}"
                     raised
